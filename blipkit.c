@@ -28,6 +28,11 @@ BKInt setNote(float note) {
 }
 
 EMSCRIPTEN_KEEPALIVE
+BKInt setEnvelope(BKInt attack, BKInt decay, BKInt sustain, BKInt release) {
+	return BKInstrumentSetEnvelopeADSR(&instr, attack, decay, sustain * BK_MAX_VOLUME / 255, release);
+}
+
+EMSCRIPTEN_KEEPALIVE
 float const* getBuffer() {
 	return bufferFloat;
 }
@@ -99,14 +104,14 @@ static void initialize(BKInt numChannels, BKInt sampleRate) {
 	};
 
 	//BKInstrumentSetSequence(&instr, BK_SEQUENCE_PITCH, pitch, 4, 2, 1);
-	BKInstrumentSetSequence(&instr, BK_SEQUENCE_DUTY_CYCLE, dutyCycle, 2, 0, 1);
+	//BKInstrumentSetSequence(&instr, BK_SEQUENCE_DUTY_CYCLE, dutyCycle, 2, 0, 1);
 	BKInstrumentSetEnvelopeADSR(&instr, 3, 8, BK_MAX_VOLUME * 0.8, 84);
 
 	BKTrackAttach(&track, &ctx);
 
 	BKSetAttr(&track, BK_MASTER_VOLUME, BK_MAX_VOLUME * 0.15);
 	BKSetAttr(&track, BK_VOLUME, BK_MAX_VOLUME);
-	BKSetAttr(&track, BK_DUTY_CYCLE, 4);
+	BKSetAttr(&track, BK_DUTY_CYCLE, 8);
 	BKSetPtr(&track, BK_INSTRUMENT, &instr, sizeof(&instr));
 	//BKSetAttr(&track, BK_ARPEGGIO_DIVIDER, 8);
 	BKSetAttr(&track, BK_EFFECT_PORTAMENTO, 12);

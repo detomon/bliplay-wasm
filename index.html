@@ -23,12 +23,13 @@
 		.controls-wrapper {
 			flex: none;
 			display: flex;
+			flex-wrap: wrap;
 		}
 
 		.controls-wrapper .control {
 			padding: 0.5rem;
 			display: block;
-			flex: 1;
+			flex: none;
 		}
 
 		.screen-wrapper {
@@ -43,6 +44,10 @@
 			height: 100%;
 			display: block;
 			position: absolute;
+		}
+
+		input {
+			vertical-align: middle;
 		}
 
 		#log {
@@ -61,6 +66,10 @@
 			<option value="4">Sawtooth</option>
 			<option value="5">Sine</option>
 		</select></label>
+		<label class="control"> Attack: <input name="attack" type="range" min="0" max="120" value="0"></label>
+		<label class="control"> Decay: <input name="decay" type="range" min="0" max="120" value="24"></label>
+		<label class="control"> Sustain: <input name="sustain" type="range" min="0" max="255" value="192"></label>
+		<label class="control"> Release: <input name="release" type="range" min="0" max="240" value="48"></label>
 	</div>
 	<div class="screen-wrapper">
 		<svg viewBox="0 0 12 8" preserveAspectRatio="none" id="screen"></svg>
@@ -117,6 +126,10 @@ class BlipKitController {
 		return memory.subarray(offsetStart, offsetEnd);
 	}
 
+	updateEnvelope(attack, decay, sustain, release) {
+		controller.module._setEnvelope(attack, decay, sustain, release);
+	}
+
 	init() {
 		const module = this.module;
 		let down = false;
@@ -126,11 +139,14 @@ class BlipKitController {
 			this.connectNode();
 		}, 10);
 
-		function setNoteFromEvent(e) {
-			const width = window.innerWidth;
-			const height = window.innerHeight;
-			const x = Math.floor(e.clientX / width * 12);
-			const y = 7 - Math.floor(e.clientY / height * 8);
+		function setNoteFromEvent(e, target) {
+			const rect = target.getBoundingClientRect();
+			const width = rect.width;
+			const height = rect.height;
+			let x = e.clientX - rect.left;
+			let y = e.clientY - rect.top;
+			x = Math.floor(x / width * 12);
+			y = 7 - Math.floor(y / height * 8);
 			const tone = y * 12 + x;
 			const toneIdx = tone % 12;
 			let newArpType = 0;
@@ -164,13 +180,13 @@ class BlipKitController {
 
 		svg.addEventListener('mousedown', function (e) {
 			down = true;
-			setNoteFromEvent(e);
+			setNoteFromEvent(e, svg);
 			e.preventDefault();
 		});
 
 		svg.addEventListener('mousemove', function (e) {
 			if (down) {
-				setNoteFromEvent(e);
+				setNoteFromEvent(e, svg);
 			}
 		});
 
@@ -178,6 +194,26 @@ class BlipKitController {
 			down = false;
 			module._setNote(-1);
 		});
+
+		const attackField = document.querySelector('input[name=attack]');
+		const decayField = document.querySelector('input[name=decay]');
+		const sustainField = document.querySelector('input[name=sustain]');
+		const releaseField = document.querySelector('input[name=release]');
+
+		function updateEnvelope() {
+			const attack = attackField.value;
+			const decay = decayField.value;
+			const sustain = sustainField.value;
+			const release = releaseField.value;
+
+			controller.updateEnvelope(attack, decay, sustain, release);
+		}
+
+		[attackField, decayField, sustainField, releaseField].forEach((element) => {
+			element.addEventListener('change', updateEnvelope);
+		});
+
+		updateEnvelope();
 	}
 }
 

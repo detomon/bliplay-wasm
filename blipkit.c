@@ -14,17 +14,22 @@ static BKInstrument instr;
 static BKData wave;
 
 EMSCRIPTEN_KEEPALIVE
-float const* getBuffer() {
-	return bufferFloat;
+BKInt setWaveform(BKEnum waveform) {
+	return BKSetAttr(&track, BK_WAVEFORM, waveform);
 }
 
 EMSCRIPTEN_KEEPALIVE
-void setTone(float note) {
+BKInt setNote(float note) {
 	if (note >= 0) {
 		note *= BK_FINT20_UNIT;
 	}
 
-	BKSetAttr(&track, BK_NOTE, note);
+	return BKSetAttr(&track, BK_NOTE, note);
+}
+
+EMSCRIPTEN_KEEPALIVE
+float const* getBuffer() {
+	return bufferFloat;
 }
 
 EMSCRIPTEN_KEEPALIVE
@@ -53,18 +58,18 @@ void setVibrato(float depth) {
 	BKSetPtr(&track, BK_EFFECT_VIBRATO, vibrato, sizeof(vibrato));
 }
 
-static void deinterlaceInt16Float(int16_t const source[], float target[], size_t length, size_t stride) {
-	for (size_t n = 0; n < stride; n++) {
+static void deinterlaceInt16Float(int16_t const source[], float target[], size_t length, size_t size) {
+	for (size_t n = 0; n < size; n++) {
 		float* targetPtr = &target[n * length];
 
-		for (size_t i = n; i < length * stride; i += stride) {
+		for (size_t i = n; i < length * size; i += size) {
 			*targetPtr++ = (float) source[i] / INT16_MAX;
 		}
 	}
 }
 
 EMSCRIPTEN_KEEPALIVE
-int generate(int length) {
+BKInt generate(int length) {
 	BKInt result = BKContextGenerate(&ctx, buffer, length);
 
 	if (result > 0) {
@@ -81,23 +86,9 @@ BKTime getTime(void) {
 
 static void initialize(BKInt numChannels, BKInt sampleRate) {
 	BKContextInit(&ctx, numChannels, sampleRate);
-	BKTrackInit(&track, BK_SAWTOOTH);
+	BKTrackInit(&track, BK_SQUARE);
 	BKInstrumentInit(&instr);
 	BKDataInit(&wave);
-
-	static BKFrame waveData[32] = {
-		-255, -163, -154, -100, 45, 127, 9, -163, -163, -27, 63, 72, 63, 9,
-		-100, -154, -127, -91, -91, -91, -91, -127, -154, -100, 45, 127, 9,
-		-163, -163, 9, 127, 45,
-	};
-
-	for (int i = 0; i < 32; i++) {
-		int d = waveData[i];
-		d = d * BK_MAX_VOLUME / 255;
-		waveData[i] = d;
-	}
-
-	BKDataSetFrames(&wave, waveData, 32, 1, 1);
 
 	BKInt const pitch[4] = {
 		12.0 * BK_FINT20_UNIT, 12.0 * BK_FINT20_UNIT, 0, -12.0 * BK_FINT20_UNIT
@@ -121,8 +112,6 @@ static void initialize(BKInt numChannels, BKInt sampleRate) {
 	BKSetAttr(&track, BK_EFFECT_PORTAMENTO, 12);
 	BKSetAttr(&track, BK_TRIANGLE_IGNORES_VOLUME, 0);
 	//BKSetAttr(&track, BK_PANNING, -8000);
-
-	//BKSetPtr(&track, BK_WAVEFORM, &wave, sizeof(&wave));
 
 	// fixes Error: Out of bounds memory access???
 	//printf("main: %p %p\n", BKSetAttr, BKTrackAlloc);

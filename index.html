@@ -2,17 +2,47 @@
 <head>
 	<title>BlipKit</title>
 	<style type="text/css">
+		*, *:after, *:before {
+			box-sizing: border-box;
+		}
+
 		html, body {
 			width: 100%;
 			height: 100%;
 			margin: 0;
-			background: #9bc;
+			font-family: Helvetica, sans-serif;
+			font-size: 15px;
+		}
+
+		.wrapper {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.controls-wrapper {
+			flex: none;
+			display: flex;
+		}
+
+		.controls-wrapper .control {
+			padding: 0.5rem;
+			display: block;
+			flex: 1;
+		}
+
+		.screen-wrapper {
+			flex: 1;
+			position: relative;
 		}
 
 		svg {
+			left: 0;
+			top: 0;
 			width: 100%;
 			height: 100%;
 			display: block;
+			position: absolute;
 		}
 
 		#log {
@@ -22,7 +52,20 @@
 </head>
 <body>
 
-<svg viewBox="0 0 12 8" preserveAspectRatio="none" id="screen"></svg>
+<div class="wrapper">
+	<div class="controls-wrapper">
+		<label class="control"> Waveform: <select name="waveform">
+			<option value="1">Square</option>
+			<option value="2">Triangle</option>
+			<option value="3">Noise</option>
+			<option value="4">Sawtooth</option>
+			<option value="5">Sine</option>
+		</select></label>
+	</div>
+	<div class="screen-wrapper">
+		<svg viewBox="0 0 12 8" preserveAspectRatio="none" id="screen"></svg>
+	</div>
+</div>
 
 <script>
 
@@ -83,7 +126,7 @@ class BlipKitController {
 			this.connectNode();
 		}, 10);
 
-		function setToneFromEvent(e) {
+		function setNoteFromEvent(e) {
 			const width = window.innerWidth;
 			const height = window.innerHeight;
 			const x = Math.floor(e.clientX / width * 12);
@@ -99,7 +142,7 @@ class BlipKitController {
 				newArpType = 2;
 			}
 
-			if (newArpType !== arpType) {
+			/*if (newArpType !== arpType) {
 				arpType = newArpType;
 
 				switch (arpType) {
@@ -112,29 +155,40 @@ class BlipKitController {
 						break;
 					}
 				}
-			}
+			}*/
 
-			module._setTone(tone);
+			module._setNote(tone);
 		}
 
-		document.addEventListener('mousedown', function (e) {
+		let svg = document.querySelector('#screen');
+
+		svg.addEventListener('mousedown', function (e) {
 			down = true;
-			setToneFromEvent(e);
+			setNoteFromEvent(e);
 			e.preventDefault();
 		});
 
-		document.addEventListener('mousemove', function (e) {
+		svg.addEventListener('mousemove', function (e) {
 			if (down) {
-				setToneFromEvent(e);
+				setNoteFromEvent(e);
 			}
 		});
 
 		document.addEventListener('mouseup', function () {
 			down = false;
-			module._setTone(-1);
+			module._setNote(-1);
 		});
 	}
 }
+
+const waveformShift = 4 << 12;
+const BK_SQUARE     = waveformShift + 1;
+const BK_TRIANGLE   = waveformShift + 2;
+const BK_NOISE      = waveformShift + 3;
+const BK_SAWTOOTH   = waveformShift + 4;
+const BK_SINE       = waveformShift + 5;
+const BK_CUSTOM     = waveformShift + 6;
+const BK_SAMPLE     = waveformShift + 7;
 
 let BlipKit = {};
 let controller = new BlipKitController(BlipKit);
@@ -156,10 +210,15 @@ for (let x = 0; x < 12; x++) {
 		rect.setAttribute('x', (x + 0.025) + 'px');
 		rect.setAttribute('y', (y + 0.025) + 'px');
 		rect.setAttribute('fill', '#000');
-		rect.setAttribute('opacity', ((y + 1) / 8));
+		rect.setAttribute('opacity', ((y + 1) / 8) * 0.25);
 		screen.appendChild(rect);
 	}
 }
+
+document.querySelector('select[name=waveform]').addEventListener('change', function (e) {
+	const value = waveformShift + parseInt(this.selectedOptions[0].value);
+	controller.module._setWaveform(value);
+});
 
 </script>
 <script src="blipkit.js"></script>

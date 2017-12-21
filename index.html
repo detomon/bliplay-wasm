@@ -226,14 +226,13 @@ const BK_SINE       = waveformShift + 5;
 const BK_CUSTOM     = waveformShift + 6;
 const BK_SAMPLE     = waveformShift + 7;
 
-let BlipKit = {};
-let controller = new BlipKitController(BlipKit);
-
-let app = {
-	ready: function () {
+let BlipKit = {
+	onRuntimeInitialized: () => {
 		controller.init();
 	},
 };
+
+let controller = new BlipKitController(BlipKit);
 
 let screen = document.querySelector('#screen');
 

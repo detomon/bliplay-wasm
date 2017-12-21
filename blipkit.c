@@ -133,8 +133,6 @@ EMSCRIPTEN_KEEPALIVE
 int main(int argc, char const* const argv[]) {
 	initialize(numChannels, sampleRate);
 
-	EM_ASM(app.ready());
-
 	emscripten_set_main_loop(loop, 0, 0);
 
 	return 0;

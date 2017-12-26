@@ -1,0 +1,87 @@
+:root {
+	--input-text-color: #a0a0a0;
+}
+
+*, *:after, *:before {
+	box-sizing: border-box;
+}
+
+html, body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	font-family: Helvetica, sans-serif;
+	font-size: 15px;
+	background: #202020;
+}
+
+.wrapper {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.controls-wrapper {
+	padding: 0 0.6667rem;
+	flex: none;
+	display: flex;
+	flex-wrap: wrap;
+	background: #606060;
+	color: #f0f0f0;
+}
+
+.controls-wrapper .control {
+	padding: 0.5rem 0.6667rem;
+	display: flex;
+	flex: none;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+.controls-wrapper .control .label-text {
+	padding-right: 0.5rem;
+}
+
+.screen-wrapper {
+	flex: 1;
+	position: relative;
+}
+
+svg {
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	display: block;
+	position: absolute;
+}
+
+input, select {
+	vertical-align: middle;
+}
+
+select {
+	color: var(--input-text-color);
+	margin: 0;
+	padding: 0.5rem 1rem;
+	border: 0;
+	border-radius: 0;
+	background: #303030;
+	appearance: none;
+	-webkit-appearance: none;
+}
+
+input, textarea, select {
+	font: inherit;
+}
+
+select, button,
+input[type=button], input[type=submit], input[type=reset],
+.button {
+	cursor: pointer;
+}
+
+#log {
+	display: none;
+}

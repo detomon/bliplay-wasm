@@ -1,75 +1,39 @@
+<!DOCTYPE html>
 <html>
 <head>
 	<title>BlipKit</title>
-	<style type="text/css">
-		*, *:after, *:before {
-			box-sizing: border-box;
-		}
-
-		html, body {
-			width: 100%;
-			height: 100%;
-			margin: 0;
-			font-family: Helvetica, sans-serif;
-			font-size: 15px;
-		}
-
-		.wrapper {
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-		}
-
-		.controls-wrapper {
-			flex: none;
-			display: flex;
-			flex-wrap: wrap;
-		}
-
-		.controls-wrapper .control {
-			padding: 0.5rem;
-			display: block;
-			flex: none;
-		}
-
-		.screen-wrapper {
-			flex: 1;
-			position: relative;
-		}
-
-		svg {
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			display: block;
-			position: absolute;
-		}
-
-		input {
-			vertical-align: middle;
-		}
-
-		#log {
-			display: none;
-		}
-	</style>
+	<link rel="stylesheet" href="assets/blipkit.css">
 </head>
 <body>
 
 <div class="wrapper">
 	<div class="controls-wrapper">
-		<label class="control"> Waveform: <select name="waveform">
-			<option value="1">Square</option>
-			<option value="2">Triangle</option>
-			<option value="3">Noise</option>
-			<option value="4">Sawtooth</option>
-			<option value="5">Sine</option>
-		</select></label>
-		<label class="control"> Attack: <input name="attack" type="range" min="0" max="120" value="0"></label>
-		<label class="control"> Decay: <input name="decay" type="range" min="0" max="120" value="24"></label>
-		<label class="control"> Sustain: <input name="sustain" type="range" min="0" max="255" value="192"></label>
-		<label class="control"> Release: <input name="release" type="range" min="0" max="240" value="48"></label>
+		<label class="control">
+			<span class="label-text">Waveform</span>
+		 	<select name="waveform">
+				<option value="1">Square</option>
+				<option value="2">Triangle</option>
+				<option value="3">Noise</option>
+				<option value="4">Sawtooth</option>
+				<option value="5">Sine</option>
+			</select>
+		</label>
+		<label class="control">
+			<span class="label-text">Attack</span>
+			<input name="attack" type="range" min="0" max="120" value="0">
+		</label>
+		<label class="control">
+			<span class="label-text">Decay</span>
+			<input name="decay" type="range" min="0" max="120" value="24">
+		</label>
+		<label class="control">
+			<span class="label-text">Sustain</span>
+			<input name="sustain" type="range" min="0" max="255" value="192">
+		</label>
+		<label class="control">
+			<span class="label-text">Release</span>
+			<input name="release" type="range" min="0" max="240" value="48">
+		</label>
 	</div>
 	<div class="screen-wrapper">
 		<svg viewBox="0 0 12 8" preserveAspectRatio="none" id="screen"></svg>
@@ -244,8 +208,8 @@ for (let x = 0; x < 12; x++) {
 		rect.setAttribute('height', '0.95px');
 		rect.setAttribute('x', (x + 0.025) + 'px');
 		rect.setAttribute('y', (y + 0.025) + 'px');
-		rect.setAttribute('fill', '#000');
-		rect.setAttribute('opacity', ((y + 1) / 8) * 0.25);
+		rect.setAttribute('fill', '#fff');
+		rect.setAttribute('opacity', (1 - (y + 1) / 8) * 0.25);
 		screen.appendChild(rect);
 	}
 }
@@ -256,7 +220,7 @@ document.querySelector('select[name=waveform]').addEventListener('change', funct
 });
 
 </script>
-<script src="blipkit.js"></script>
+<script src="assets/blipkit.js"></script>
 
 </body>
 </html>

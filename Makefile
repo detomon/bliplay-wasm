@@ -1,12 +1,13 @@
 CC = emcc
 
 NAME = blipkit
+DIR = assets
 MODULE_NAME = BlipKit
-TARGET_MAIN = $(NAME).js
+TARGET_MAIN = $(DIR)/$(NAME).js
 TARGETS_ALL = $(TARGET_MAIN) $(TARGET_MAIN:%.js=%.wasm)
 
-SRC = BlipKit/src
-SOURCES = $(NAME).c
+SRC = $(DIR)/BlipKit/src
+SOURCES = $(DIR)/$(NAME).c
 SOURCES += $(wildcard $(SRC)/*.c)
 
 EXPORTS = ["_main"]

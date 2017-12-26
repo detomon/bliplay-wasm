@@ -1,6 +1,7 @@
 #include <emscripten.h>
 #include <string.h>
 #include <unistd.h>
+//#include <SDL/SDL.h>
 #include "BlipKit.h"
 
 static BKInt numChannels = 2;
@@ -129,11 +130,58 @@ static void loop(void) {
 	//printf("w\n");
 }
 
+/*static BKInt fill_audio (void* ctx, Uint8* stream, int len) {
+	int const sampleRate = 44100;
+	int const numChannels = 2;
+	BKUInt const numFrames = len / sizeof(BKFrame) / numChannels;
+
+	printf("%u\n", numFrames);
+
+	return BKContextGenerate (&ctx, (BKFrame*)stream, numFrames);
+}
+
+static BKInt initSDL(void* ctx, char const** error) {
+	int const sampleRate = 44100;
+	int const numChannels = 2;
+	int const samples = 512;
+
+	SDL_Init (SDL_INIT_AUDIO);
+
+	SDL_AudioSpec wanted;
+
+	wanted.freq     = sampleRate;
+	wanted.format   = AUDIO_S16SYS;
+	wanted.channels = numChannels;
+	wanted.samples  = samples;
+	wanted.callback = (void*)fill_audio;
+	wanted.userdata = NULL;
+
+	if (SDL_OpenAudio(&wanted, NULL) < 0) {
+		*error = SDL_GetError();
+		return -1;
+	}
+
+	return 0;
+}*/
+
 EMSCRIPTEN_KEEPALIVE
 int main(int argc, char const* const argv[]) {
+	//char const* error = NULL;
+
 	initialize(numChannels, sampleRate);
 
+	//initSDL(NULL, &error);
+
+	//printf("Error: %s\n", error);
+
+	//SDL_PauseAudio(0);
+
+	//EM_ASM(app.ready());
+
 	emscripten_set_main_loop(loop, 0, 0);
+
+	// end
+	//SDL_CloseAudio();
 
 	return 0;
 }

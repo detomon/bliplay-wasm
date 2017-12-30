@@ -1,0 +1,3 @@
+[submodule "assets/bliplay"]
+	path = assets/bliplay
+	url = https://github.com/detomon/bliplay.git

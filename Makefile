@@ -6,14 +6,16 @@ MODULE_NAME = BlipKit
 TARGET_MAIN = $(DIR)/$(NAME).js
 TARGETS_ALL = $(TARGET_MAIN) $(TARGET_MAIN:%.js=%.wasm)
 
-SRC = $(DIR)/BlipKit/src
+BKSRC = $(DIR)/bliplay/BlipKit/src
+BPSRC = $(DIR)/bliplay/parser
 SOURCES = $(DIR)/$(NAME).c
-SOURCES += $(wildcard $(SRC)/*.c)
+SOURCES += $(wildcard $(BKSRC)/*.c)
+SOURCES += $(wildcard $(BPSRC)/*.c)
 
 EXPORTS = ["_main"]
 RUNTIME_EXPORTS = ["ccall","cwrap"]
 
-CFLAGS = -O2 -Wall -I./$(SRC)
+CFLAGS = -O2 -Wall -I./$(BKSRC) -I./$(BPSRC)
 OTHER_FLAGS = \
 	-s WASM=1 \
 	-s NO_EXIT_RUNTIME=1 \

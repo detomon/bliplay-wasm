@@ -3,6 +3,7 @@
 #include <unistd.h>
 //#include <SDL/SDL.h>
 #include "BlipKit.h"
+#include "BKTK.h"
 
 static BKInt numChannels = 2;
 static BKInt sampleRate = 44100;
@@ -13,6 +14,11 @@ static BKContext ctx;
 static BKTrack track;
 static BKInstrument instr;
 static BKData wave;
+
+static BKTKParser parser;
+static BKTKCompiler compiler;
+static BKTKContext context;
+static BKTKTokenizer tokenizer;
 
 EMSCRIPTEN_KEEPALIVE
 BKInt setWaveform(BKEnum waveform) {
@@ -119,11 +125,96 @@ static void initialize(BKInt numChannels, BKInt sampleRate) {
 	BKSetAttr(&track, BK_TRIANGLE_IGNORES_VOLUME, 0);
 	//BKSetAttr(&track, BK_PANNING, -8000);
 
-	// fixes Error: Out of bounds memory access???
-	//printf("main: %p %p\n", BKSetAttr, BKTrackAlloc);
-
 	buffer = calloc(sizeof(BKFrame[numChannels]), maxBufferSize);
 	bufferFloat = calloc(sizeof(float[numChannels]), maxBufferSize);
+}
+
+static BKInt putToken(BKTKToken const* token, BKTKParser* parser) {
+	BKInt res;
+
+	if ((res = BKTKParserPutTokens(parser, token, 1)) != 0) {
+		return res;
+	}
+
+	return 0;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int compileSource(uint8_t const* source) {
+	BKInt res = 0;
+	BKTKParserNode* nodeTree;
+	size_t const length = strlen(source);
+
+	BKDispose(&context);
+
+	if ((res = BKTKParserInit(&parser)) != 0) {
+		fprintf(stderr, "BKTKParserInit failed (%s)\n", BKStatusGetName(res));
+		return res;
+	}
+
+	if ((res = BKTKTokenizerInit(&tokenizer)) != 0) {
+		fprintf(stderr, "BKTKTokenizerInit failed (%s)\n", BKStatusGetName(res));
+		return res;
+	}
+
+	if ((res = BKTKCompilerInit(&compiler)) != 0) {
+		fprintf(stderr, "BKTKCompilerInit failed (%s)\n", BKStatusGetName(res));
+		return res;
+	}
+
+	res = BKTKTokenizerPutChars (&tokenizer, source, length, (BKTKPutTokenFunc) putToken, &parser);
+
+	// end tokenizer
+	BKTKTokenizerPutChars (&tokenizer, NULL, 0, (BKTKPutTokenFunc) putToken, &parser);
+
+	if (BKTKTokenizerHasError(&tokenizer)) {
+		fprintf(stderr, "%s\n", tokenizer.buffer);
+		res = -1;
+	}
+
+	if (BKTKParserHasError(&parser)) {
+		fprintf(stderr, "%s\n", parser.buffer);
+		res = -1;
+	}
+
+
+	nodeTree = BKTKParserGetNodeTree(&parser);
+
+	if ((res = BKTKCompilerCompile(&compiler, nodeTree)) != 0) {
+		fprintf(stderr, "%s\n", (char const*)compiler.error.str);
+	}
+
+	if ((res = BKTKContextInit(&context, 0)) != 0) {
+		fprintf(stderr, "BKTKCompilerInit failed (%s)\n", BKStatusGetName(res));
+	}
+
+	if ((res = BKTKContextCreate(&context, &compiler)) != 0) {
+		fprintf(stderr, "Creating context failed (%s)\n", BKStatusGetName(res));
+		fprintf(stderr, "%s\n", (char const*)context.error.str);
+	}
+
+	BKDispose(&tokenizer);
+	BKDispose(&parser);
+	BKDispose(&compiler);
+
+	return res;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int startContext(void) {
+	BKInt res = 0;
+
+	if ((res = BKTKContextAttach(&context, &ctx)) != 0) {
+		fprintf(stderr, "Attaching context failed (%s)\n", BKStatusGetName(res));
+	}
+
+	return res;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int stopContext(void) {
+	BKTKContextDetach(&context);
+	BKDispose(&context);
 }
 
 static void loop(void) {
@@ -176,7 +267,7 @@ int main(int argc, char const* const argv[]) {
 
 	//SDL_PauseAudio(0);
 
-	//EM_ASM(app.ready());
+	EM_ASM(BlipKit.ready());
 
 	emscripten_set_main_loop(loop, 0, 0);
 

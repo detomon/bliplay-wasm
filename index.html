@@ -34,6 +34,15 @@
 			<span class="label-text">Release</span>
 			<input name="release" type="range" min="0" max="240" value="48">
 		</label>
+		<div class="control">
+			<button id="start">Start</button>
+		</div>
+		<div class="control">
+			<button id="stop">Stop</button>
+		</div>
+	</div>
+	<div class="source-wrapper">
+		<textarea id="source"></textarea>
 	</div>
 	<div class="screen-wrapper">
 		<svg viewBox="0 0 12 8" preserveAspectRatio="none" id="screen"></svg>
@@ -159,6 +168,20 @@ class BlipKitController {
 			module._setNote(-1);
 		});
 
+		document.querySelector('#start').addEventListener('click', function () {
+			const source = document.querySelector('#source').value;
+
+			let result = Module.ccall('compileSource', null, ['string'], [source]);
+
+			console.log(result);
+
+			Module._startContext();
+		});
+
+		document.querySelector('#stop').addEventListener('click', function () {
+			Module._stopContext();
+		});
+
 		const attackField = document.querySelector('input[name=attack]');
 		const decayField = document.querySelector('input[name=decay]');
 		const sustainField = document.querySelector('input[name=sustain]');
@@ -191,7 +214,7 @@ const BK_CUSTOM     = waveformShift + 6;
 const BK_SAMPLE     = waveformShift + 7;
 
 let BlipKit = {
-	onRuntimeInitialized: () => {
+	ready: () => {
 		controller.init();
 	},
 };

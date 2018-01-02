@@ -140,7 +140,7 @@ static BKInt putToken(BKTKToken const* token, BKTKParser* parser) {
 }
 
 EMSCRIPTEN_KEEPALIVE
-int compileSource(uint8_t const* source) {
+int compileSource(char const* source) {
 	BKInt res = 0;
 	BKTKParserNode* nodeTree;
 	size_t const length = strlen(source);
@@ -149,48 +149,48 @@ int compileSource(uint8_t const* source) {
 
 	if ((res = BKTKParserInit(&parser)) != 0) {
 		fprintf(stderr, "BKTKParserInit failed (%s)\n", BKStatusGetName(res));
-		return res;
 	}
 
 	if ((res = BKTKTokenizerInit(&tokenizer)) != 0) {
 		fprintf(stderr, "BKTKTokenizerInit failed (%s)\n", BKStatusGetName(res));
-		return res;
 	}
 
 	if ((res = BKTKCompilerInit(&compiler)) != 0) {
 		fprintf(stderr, "BKTKCompilerInit failed (%s)\n", BKStatusGetName(res));
-		return res;
 	}
 
-	res = BKTKTokenizerPutChars (&tokenizer, source, length, (BKTKPutTokenFunc) putToken, &parser);
+	if (res == 0) {
+		res = BKTKTokenizerPutChars (&tokenizer, source, length, (BKTKPutTokenFunc) putToken, &parser);
 
-	// end tokenizer
-	BKTKTokenizerPutChars (&tokenizer, NULL, 0, (BKTKPutTokenFunc) putToken, &parser);
+		// end tokenizer
+		BKTKTokenizerPutChars (&tokenizer, NULL, 0, (BKTKPutTokenFunc) putToken, &parser);
 
-	if (BKTKTokenizerHasError(&tokenizer)) {
-		fprintf(stderr, "%s\n", tokenizer.buffer);
-		res = -1;
-	}
+		if (BKTKTokenizerHasError(&tokenizer)) {
+			fprintf(stderr, "%s\n", tokenizer.buffer);
+			res = -1;
+		}
 
-	if (BKTKParserHasError(&parser)) {
-		fprintf(stderr, "%s\n", parser.buffer);
-		res = -1;
-	}
+		if (BKTKParserHasError(&parser)) {
+			fprintf(stderr, "%s\n", parser.buffer);
+			res = -1;
+		}
 
+		if (res == 0) {
+			nodeTree = BKTKParserGetNodeTree(&parser);
 
-	nodeTree = BKTKParserGetNodeTree(&parser);
+			if ((res = BKTKCompilerCompile(&compiler, nodeTree)) != 0) {
+				fprintf(stderr, "%s\n", (char const*)compiler.error.str);
+			}
 
-	if ((res = BKTKCompilerCompile(&compiler, nodeTree)) != 0) {
-		fprintf(stderr, "%s\n", (char const*)compiler.error.str);
-	}
+			if ((res = BKTKContextInit(&context, 0)) != 0) {
+				fprintf(stderr, "BKTKCompilerInit failed (%s)\n", BKStatusGetName(res));
+			}
 
-	if ((res = BKTKContextInit(&context, 0)) != 0) {
-		fprintf(stderr, "BKTKCompilerInit failed (%s)\n", BKStatusGetName(res));
-	}
-
-	if ((res = BKTKContextCreate(&context, &compiler)) != 0) {
-		fprintf(stderr, "Creating context failed (%s)\n", BKStatusGetName(res));
-		fprintf(stderr, "%s\n", (char const*)context.error.str);
+			if ((res = BKTKContextCreate(&context, &compiler)) != 0) {
+				fprintf(stderr, "Creating context failed (%s)\n", BKStatusGetName(res));
+				fprintf(stderr, "%s\n", (char const*)context.error.str);
+			}
+		}
 	}
 
 	BKDispose(&tokenizer);

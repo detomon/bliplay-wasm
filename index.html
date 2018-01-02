@@ -2,6 +2,9 @@
 <html>
 <head>
 	<title>BlipKit</title>
+	<link rel="stylesheet" href="codemirror/lib/codemirror.css">
+	<link rel="stylesheet" href="codemirror/theme/solarized.css">
+	<link rel="stylesheet" href="codemirror/addon/fold//foldgutter.css">
 	<link rel="stylesheet" href="assets/blipkit.css">
 </head>
 <body>
@@ -983,13 +986,15 @@ class BlipKitController {
 		});
 
 		document.querySelector('#start').addEventListener('click', function () {
-			const source = document.querySelector('#source').value;
+			const source = editor.getValue();
 
 			let result = Module.ccall('compileSource', null, ['string'], [source]);
 
 			console.log(result);
 
-			Module._startContext();
+			if (result === 0) {
+				Module._startContext();
+			}
 		});
 
 		document.querySelector('#stop').addEventListener('click', function () {
@@ -1018,6 +1023,8 @@ class BlipKitController {
 	}
 }
 
+var editor;
+
 const waveformShift = 4 << 12;
 const BK_SQUARE     = waveformShift + 1;
 const BK_TRIANGLE   = waveformShift + 2;
@@ -1030,6 +1037,17 @@ const BK_SAMPLE     = waveformShift + 7;
 let BlipKit = {
 	ready: () => {
 		controller.init();
+	},
+	printErr: (line) => {
+		const lineError = /on line (\d+)\:(\d+)$/;
+		const match = lineError.exec(line);
+
+		if (match) {
+			console.log('>>', line, match[1], match[2]);
+		}
+		else {
+			console.error(line);
+		}
 	},
 };
 
@@ -1058,6 +1076,23 @@ document.querySelector('select[name=waveform]').addEventListener('change', funct
 
 </script>
 <script src="assets/blipkit.js"></script>
+<script src="codemirror/lib/codemirror.js"></script>
+<script src="codemirror/addon/edit/matchbrackets.js"></script>
+<script src="codemirror/addon/fold/foldcode.js"></script>
+<script src="codemirror/addon/fold/brace-fold.js"></script>
+<script src="codemirror/addon/fold/foldgutter.js"></script>
+<script src="codemirror/mode/blip/blip.js"></script>
+
+<script>
+editor = CodeMirror.fromTextArea(document.querySelector('#source'), {
+	mode: 'blip',
+	lineNumbers: true,
+	matchBrackets: true,
+    foldGutter: true,
+	theme: 'solarized dark',
+    gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+});
+</script>
 
 </body>
 </html>

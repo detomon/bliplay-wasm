@@ -179,16 +179,19 @@ int compileSource(char const* source) {
 			nodeTree = BKTKParserGetNodeTree(&parser);
 
 			if ((res = BKTKCompilerCompile(&compiler, nodeTree)) != 0) {
-				fprintf(stderr, "%s\n", (char const*)compiler.error.str);
+				fprintf(stderr, "%s", (char const*)compiler.error.str);
+				res = -1;
 			}
 
-			if ((res = BKTKContextInit(&context, 0)) != 0) {
-				fprintf(stderr, "BKTKCompilerInit failed (%s)\n", BKStatusGetName(res));
-			}
+			if (res == 0) {
+				if ((res = BKTKContextInit(&context, 0)) != 0) {
+					fprintf(stderr, "BKTKCompilerInit failed (%s)\n", BKStatusGetName(res));
+				}
 
-			if ((res = BKTKContextCreate(&context, &compiler)) != 0) {
-				fprintf(stderr, "Creating context failed (%s)\n", BKStatusGetName(res));
-				fprintf(stderr, "%s\n", (char const*)context.error.str);
+				if ((res = BKTKContextCreate(&context, &compiler)) != 0) {
+					fprintf(stderr, "Creating context failed (%s)\n", BKStatusGetName(res));
+					fprintf(stderr, "%s\n", (char const*)context.error.str);
+				}
 			}
 		}
 	}

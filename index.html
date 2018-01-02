@@ -891,7 +891,10 @@ class BlipKitController {
 
 				outputData.set(channelData);
 			}
-		}
+		};
+
+		this.editor = null;
+		this.widgets = [];
 	}
 
 	connectNode() {
@@ -986,19 +989,11 @@ class BlipKitController {
 		});
 
 		document.querySelector('#start').addEventListener('click', function () {
-			const source = editor.getValue();
-
-			let result = Module.ccall('compileSource', null, ['string'], [source]);
-
-			console.log(result);
-
-			if (result === 0) {
-				Module._startContext();
-			}
+			controller.run();
 		});
 
 		document.querySelector('#stop').addEventListener('click', function () {
-			Module._stopContext();
+			controller.stop();
 		});
 
 		const attackField = document.querySelector('input[name=attack]');
@@ -1021,9 +1016,67 @@ class BlipKitController {
 
 		updateEnvelope();
 	}
-}
 
-var editor;
+	clearErrors() {
+		const widgets = this.widgets;
+
+		widgets.forEach((widget) => {
+			widget.clear();
+		});
+
+		widgets.length = 0;
+	}
+
+	setLineError(error, line, column) {
+		const editor = this.editor;
+		const widgets = this.widgets;
+		const offsetString = createOffsetIndicator(column);
+
+		let msg = document.createElement('div');
+		msg.appendChild(document.createTextNode(offsetString));
+		msg.appendChild(document.createElement('br'));
+		msg.appendChild(document.createTextNode(error));
+		msg.className = 'line-error';
+		widgets.push(editor.addLineWidget(line - 1, msg, {coverGutter: false, noHScroll: true}));
+
+		editor.scrollIntoView({line: line - 1, char: 0}, 100);
+	}
+
+	setError(line) {
+		let match;
+
+		if ((match = /^(.+) on line (\d+)\:(\d+)$/.exec(line))) {
+			this.setLineError(match[1], match[2], match[3]);
+
+			return true;
+		}
+		else if (!(match = /^User error:/.exec(line))) {
+			this.setLineError(line, 1, 1);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	run() {
+		this.clearErrors();
+
+		const source = this.editor.getValue();
+		let result = this.module.ccall('compileSource', null, ['string'], [source]);
+
+		console.log(result);
+
+		if (result === 0) {
+			this.module._startContext();
+		}
+	}
+
+	stop() {
+		this.module._stopContext();
+	}
+
+}
 
 const waveformShift = 4 << 12;
 const BK_SQUARE     = waveformShift + 1;
@@ -1034,18 +1087,37 @@ const BK_SINE       = waveformShift + 5;
 const BK_CUSTOM     = waveformShift + 6;
 const BK_SAMPLE     = waveformShift + 7;
 
-let BlipKit = {
+function createOffsetIndicator(column) {
+	function spliceSplit(str, index, count, add) {
+		var ar = str.split('');
+		ar.splice(index, count, add);
+		return ar.join('');
+	}
+
+	let offsetString = '';
+
+	for (let i = 0; i < column - 1; i++) {
+		offsetString += ' ';
+	}
+
+	offsetString += '^';
+
+	if (column > 3) {
+		offsetString = spliceSplit(offsetString, column - 4, 3, '~~~');
+	}
+	else {
+		offsetString = spliceSplit(offsetString, column, 3, '~~~');
+	}
+
+	return offsetString;
+}
+
+var BlipKit = {
 	ready: () => {
 		controller.init();
 	},
 	printErr: (line) => {
-		const lineError = /on line (\d+)\:(\d+)$/;
-		const match = lineError.exec(line);
-
-		if (match) {
-			console.log('>>', line, match[1], match[2]);
-		}
-		else {
+		if (!controller.setError(line)) {
 			console.error(line);
 		}
 	},
@@ -1084,13 +1156,13 @@ document.querySelector('select[name=waveform]').addEventListener('change', funct
 <script src="codemirror/mode/blip/blip.js"></script>
 
 <script>
-editor = CodeMirror.fromTextArea(document.querySelector('#source'), {
+controller.editor = CodeMirror.fromTextArea(document.querySelector('#source'), {
 	mode: 'blip',
 	lineNumbers: true,
 	matchBrackets: true,
     foldGutter: true,
 	theme: 'solarized dark',
-    gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+    gutters: ['note-gutter', 'CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
 });
 </script>
 

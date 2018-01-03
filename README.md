@@ -6,6 +6,10 @@
 >
 > ---
 
+## Demo
+
+[BlipKit-wasm](https://detomon.github.io/BlipKit-wasm/)
+
 ## Setup
 
 Checkout submodules:

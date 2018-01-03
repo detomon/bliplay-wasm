@@ -11,6 +11,32 @@
 
 <div class="wrapper">
 	<div class="controls-wrapper">
+		<label class="control">
+			<span class="label-text">Waveform</span>
+		 	<select name="waveform">
+				<option value="1">Square</option>
+				<option value="2">Triangle</option>
+				<option value="3">Noise</option>
+				<option value="4">Sawtooth</option>
+				<option value="5">Sine</option>
+			</select>
+		</label>
+		<label class="control">
+			<span class="label-text">Attack</span>
+			<input name="attack" type="range" min="0" max="120" value="0">
+		</label>
+		<label class="control">
+			<span class="label-text">Decay</span>
+			<input name="decay" type="range" min="0" max="120" value="24">
+		</label>
+		<label class="control">
+			<span class="label-text">Sustain</span>
+			<input name="sustain" type="range" min="0" max="255" value="192">
+		</label>
+		<label class="control">
+			<span class="label-text">Release</span>
+			<input name="release" type="range" min="0" max="240" value="48">
+		</label>
 		<div class="control">
 			<button id="start">Start</button>
 		</div>
@@ -835,6 +861,9 @@ st:18
 ]
 </textarea>
 	</div>
+	<div class="screen-wrapper">
+		<svg viewBox="0 0 12 8" preserveAspectRatio="none" id="screen"></svg>
+	</div>
 </div>
 
 <script>
@@ -890,12 +919,74 @@ class BlipKitController {
 		return memory.subarray(offsetStart, offsetEnd);
 	}
 
+	updateEnvelope(attack, decay, sustain, release) {
+		controller.module._setEnvelope(attack, decay, sustain, release);
+	}
+
 	init() {
 		const module = this.module;
+		let down = false;
+		let arpType = 0;
 
 		setTimeout(() => {
 			this.connectNode();
 		}, 10);
+
+		function setNoteFromEvent(e, target) {
+			const rect = target.getBoundingClientRect();
+			const width = rect.width;
+			const height = rect.height;
+			let x = e.clientX - rect.left;
+			let y = e.clientY - rect.top;
+			x = Math.floor(x / width * 12);
+			y = 7 - Math.floor(y / height * 8);
+			const tone = y * 12 + x;
+			const toneIdx = tone % 12;
+			let newArpType = 0;
+
+			if ([0, 3, 4, 5, 7].indexOf(toneIdx) !== -1) {
+				newArpType = 1;
+			}
+			else {
+				newArpType = 2;
+			}
+
+			/*if (newArpType !== arpType) {
+				arpType = newArpType;
+
+				switch (arpType) {
+					case 1: {
+						module._setMajorArpeggio();
+						break;
+					}
+					case 2: {
+						module._setMinorArpeggio();
+						break;
+					}
+				}
+			}*/
+
+			module._setNote(tone);
+		}
+
+		let svg = document.querySelector('#screen');
+
+		svg.addEventListener('mousedown', function (e) {
+			down = true;
+			setNoteFromEvent(e, svg);
+			e.preventDefault();
+		});
+
+		svg.addEventListener('mousemove', function (e) {
+			if (down) {
+				setNoteFromEvent(e, svg);
+			}
+		});
+
+		document.addEventListener('mouseup', function () {
+			down = false;
+			module._setNote(-1);
+		});
 
 		document.querySelector('#start').addEventListener('click', function () {
 			controller.run();
@@ -904,6 +995,26 @@ class BlipKitController {
 		document.querySelector('#stop').addEventListener('click', function () {
 			controller.stop();
 		});
+
+		const attackField = document.querySelector('input[name=attack]');
+		const decayField = document.querySelector('input[name=decay]');
+		const sustainField = document.querySelector('input[name=sustain]');
+		const releaseField = document.querySelector('input[name=release]');
+
+		function updateEnvelope() {
+			const attack = attackField.value;
+			const decay = decayField.value;
+			const sustain = sustainField.value;
+			const release = releaseField.value;
+
+			controller.updateEnvelope(attack, decay, sustain, release);
+		}
+
+		[attackField, decayField, sustainField, releaseField].forEach((element) => {
+			element.addEventListener('change', updateEnvelope);
+		});
+
+		updateEnvelope();
 	}
 
 	clearErrors() {
@@ -967,6 +1078,15 @@ class BlipKitController {
 
 }
 
+const waveformShift = 4 << 12;
+const BK_SQUARE     = waveformShift + 1;
+const BK_TRIANGLE   = waveformShift + 2;
+const BK_NOISE      = waveformShift + 3;
+const BK_SAWTOOTH   = waveformShift + 4;
+const BK_SINE       = waveformShift + 5;
+const BK_CUSTOM     = waveformShift + 6;
+const BK_SAMPLE     = waveformShift + 7;
+
 function createOffsetIndicator(column) {
 	function spliceSplit(str, index, count, add) {
 		var ar = str.split('');
@@ -1004,6 +1124,27 @@ var BlipKit = {
 };
 
 let controller = new BlipKitController(BlipKit);
+
+let screen = document.querySelector('#screen');
+
+for (let x = 0; x < 12; x++) {
+	for (let y = 0; y < 8; y++) {
+		let i = y * 12 + x;
+		let rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+		rect.setAttribute('width', '0.95px');
+		rect.setAttribute('height', '0.95px');
+		rect.setAttribute('x', (x + 0.025) + 'px');
+		rect.setAttribute('y', (y + 0.025) + 'px');
+		rect.setAttribute('fill', '#fff');
+		rect.setAttribute('opacity', (1 - (y + 1) / 8) * 0.25);
+		screen.appendChild(rect);
+	}
+}
+
+document.querySelector('select[name=waveform]').addEventListener('change', function (e) {
+	const value = waveformShift + parseInt(this.selectedOptions[0].value);
+	controller.module._setWaveform(value);
+});
 
 </script>
 <script src="assets/blipkit.js"></script>

@@ -11,7 +11,7 @@
 Checkout submodules:
 
 ```sh
-git submodule update --init
+git submodule update --init --recursive
 ```
 
 Install emscripten:

@@ -1,0 +1,32 @@
+:root {
+	--transition-time: 0.2s;
+}
+
+.page-loader {
+	width: 100%;
+	height: 0;
+	left: 0;
+	top: 0;
+	position: fixed;
+	background: var(--background-color);
+	z-index: 1000;
+	opacity: 0;
+	transition-timing-function: ease-out;
+	transition-duration: var(--transition-time), 0;
+	transition-property: opacity, height;
+	transition-delay: 0, var(--transition-time);
+}
+
+html:not(.loaded) {
+	overflow: hidden;
+}
+
+html:not(.loaded) body {
+	overflow: hidden;
+}
+
+html:not(.loaded) .page-loader {
+	opacity: 1;
+	height: 100%;
+	transition-delay: 0, 0;
+}

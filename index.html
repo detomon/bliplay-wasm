@@ -5,17 +5,16 @@
 	<link rel="stylesheet" href="codemirror/lib/codemirror.css">
 	<link rel="stylesheet" href="codemirror/theme/solarized.css">
 	<link rel="stylesheet" href="codemirror/addon/fold//foldgutter.css">
-	<link rel="stylesheet" href="assets/blipkit.css">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<link rel="stylesheet" href="assets/css/editor.css">
+	<link rel="stylesheet" href="assets/css/loader.css">
 </head>
 <body>
 
 <div class="wrapper">
 	<div class="controls-wrapper">
 		<div class="control">
-			<button id="start">Start</button>
-		</div>
-		<div class="control">
-			<button id="stop">Stop</button>
+			BlipKit
 		</div>
 	</div>
 	<div class="source-wrapper">
@@ -835,7 +834,17 @@ st:18
 ]
 </textarea>
 	</div>
+	<div class="controls-wrapper">
+		<div class="control">
+			<button id="start">Start</button>
+		</div>
+		<div class="control">
+			<button id="stop">Stop</button>
+		</div>
+	</div>
 </div>
+
+<div class="page-loader"></div>
 
 <script>
 
@@ -874,8 +883,8 @@ class BlipKitController {
 	}
 
 	disconnectNode() {
-		this.source.connect(this.generatorNode);
-		this.generatorNode.connect(this.context.destination);
+		this.source.disconnect(this.generatorNode);
+		this.generatorNode.disconnect(this.context.destination);
 	}
 
 	generate(length) {
@@ -893,9 +902,9 @@ class BlipKitController {
 	init() {
 		const module = this.module;
 
-		setTimeout(() => {
+		/*setTimeout(() => {
 			this.connectNode();
-		}, 10);
+		}, 10);*/
 
 		document.querySelector('#start').addEventListener('click', function () {
 			controller.run();
@@ -949,12 +958,12 @@ class BlipKitController {
 	}
 
 	run() {
+		this.connectNode();
+
 		this.clearErrors();
 
 		const source = this.editor.getValue();
 		let result = this.module.ccall('compileSource', null, ['string'], [source]);
-
-		console.log(result);
 
 		if (result === 0) {
 			this.module._startContext();
@@ -963,6 +972,8 @@ class BlipKitController {
 
 	stop() {
 		this.module._stopContext();
+
+		this.disconnectNode();
 	}
 
 }
@@ -1004,6 +1015,10 @@ var BlipKit = {
 };
 
 let controller = new BlipKitController(BlipKit);
+
+window.addEventListener('load', () => {
+	document.documentElement.classList.add('loaded');
+});
 
 </script>
 <script src="assets/blipkit.js"></script>

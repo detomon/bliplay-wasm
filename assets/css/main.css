@@ -1,5 +1,6 @@
 :root {
 	--input-text-color: #a0a0a0;
+	--background-color: #073642;
 }
 
 *, *:after, *:before {
@@ -12,7 +13,7 @@ html, body {
 	margin: 0;
 	font-family: Helvetica, sans-serif;
 	font-size: 15px;
-	background: #202020;
+	background: var(--background-color);
 }
 
 .wrapper {
@@ -26,7 +27,8 @@ html, body {
 	flex: none;
 	display: flex;
 	flex-wrap: wrap;
-	background: #606060;
+	justify-content: center;
+	background: var(--background-color);
 	color: #f0f0f0;
 }
 
@@ -46,19 +48,6 @@ html, body {
 .screen-wrapper {
 	flex: 1;
 	position: relative;
-}
-
-.source-wrapper {
-	position: relative;
-	flex: 1;
-}
-
-.source-wrapper textarea {
-	font-family: Monaco, Courier, Consolas, monospace;
-	font-size: 0.8em;
-	display: flex;
-	height: 100%;
-	resize: none;
 }
 
 svg {
@@ -107,24 +96,4 @@ select, button,
 input[type=button], input[type=submit], input[type=reset],
 .button {
 	cursor: pointer;
-}
-
-.CodeMirror {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	height: auto;
-}
-
-.CodeMirror .line-error {
-	padding-left: 4px;
-	background: rgba(255, 0, 0, 0.2);
-	box-shadow: 0 0 1px 1px red inset;
-	color: white;
-}
-
-#log {
-	display: none;
 }

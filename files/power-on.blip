@@ -1,0 +1,10 @@
+st:18 % 200 BPM
+w:square
+dc:8
+a:c5
+s:1
+a:c6
+e:vs:9/1;v:0
+s:9
+r
+e:vs;v:255

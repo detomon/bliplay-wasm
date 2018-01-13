@@ -184,7 +184,7 @@ controller.editor = CodeMirror.fromTextArea(sourceElement, {
 	lineNumbers: true,
 	matchBrackets: true,
     foldGutter: true,
-	theme: 'solarized dark',
+	theme: 'base16-ocean-dark',
     gutters: ['note-gutter', 'CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
 });
 

@@ -34,5 +34,16 @@ fileSelect.addEventListener('change', (e) => {
 	changeFile(fileSelect);
 });
 
-fileSelect.selectedIndex = 1;
-changeFile(fileSelect);
+const sourceRaw = /^#s=(.*)$/.exec(window.location.hash);
+
+if (sourceRaw) {
+	const source = unescape(sourceRaw[1]);
+
+	if (source) {
+		controller.editor.setValue(source);
+	}
+}
+else {
+	fileSelect.selectedIndex = 1;
+	changeFile(fileSelect);
+}

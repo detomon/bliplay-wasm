@@ -6,7 +6,11 @@
 .cm-s-base16-ocean-dark .CodeMirror-gutters { background: #343d46; border-right-color: #343d46; color: #65737e;  }
 .cm-s-base16-ocean-dark.CodeMirror { color: #c0c5ce; }
 .cm-s-base16-ocean-dark.CodeMirror { background: #2b303b; }
-.cm-s-base16-ocean-dark .CodeMirror-cursor { color: #c0c5ce; }
+
+.cm-s-base16-ocean-dark .CodeMirror-cursor { border-left: 1px solid #c0c5ce; }
+.cm-s-base16-ocean-dark.cm-fat-cursor .CodeMirror-cursor { background: #c0c5ce; }
+.cm-s-base16-ocean-dark .cm-animate-fat-cursor { background-color: #c0c5ce; }
+
 .cm-s-base16-ocean-dark .CodeMirror-activeline-background { background: #65737e30 !important; }
 .cm-s-base16-ocean-dark .CodeMirror-selected { background: #4f5b66; }
 .cm-s-base16-ocean-dark .cm-comment { color: #65737e; }

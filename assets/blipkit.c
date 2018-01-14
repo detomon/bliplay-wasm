@@ -20,6 +20,7 @@ static BKTKCompiler compiler;
 static BKTKContext context;
 static BKTKTokenizer tokenizer;
 
+/*
 EMSCRIPTEN_KEEPALIVE
 BKInt setWaveform(BKEnum waveform) {
 	return BKSetAttr(&track, BK_WAVEFORM, waveform);
@@ -33,17 +34,21 @@ BKInt setNote(float note) {
 
 	return BKSetAttr(&track, BK_NOTE, note);
 }
+*/
 
+/*
 EMSCRIPTEN_KEEPALIVE
 BKInt setEnvelope(BKInt attack, BKInt decay, BKInt sustain, BKInt release) {
 	return BKInstrumentSetEnvelopeADSR(&instr, attack, decay, sustain * BK_MAX_VOLUME / 255, release);
 }
+*/
 
 EMSCRIPTEN_KEEPALIVE
 float const* getBuffer() {
 	return bufferFloat;
 }
 
+/*
 EMSCRIPTEN_KEEPALIVE
 void setMajorArpeggio() {
 	static BKInt const arpeggio[4] = {
@@ -69,6 +74,7 @@ void setVibrato(float depth) {
 	BKInt vibrato[2] = {8, BK_FINT20_UNIT * depth};
 	BKSetPtr(&track, BK_EFFECT_VIBRATO, vibrato, sizeof(vibrato));
 }
+*/
 
 static void deinterlaceInt16Float(int16_t const source[], float target[], size_t length, size_t size) {
 	for (size_t n = 0; n < size; n++) {
@@ -220,8 +226,30 @@ int stopContext(void) {
 	BKDispose(&context);
 }
 
+static BKInt hasRunningTracks(BKTKContext const* ctx) {
+	BKTKTrack const* track;
+	BKSize numActive = 0;
+
+	for (BKInt i = 0; i < ctx -> tracks.len; i ++) {
+		track = *(BKTKTrack const* const*) BKArrayItemAt(&ctx->tracks, i);
+
+		if (track) {
+			numActive++;
+
+			// exit if tracks have stopped
+			if (track->interpreter.object.flags & BKTKInterpreterFlagHasStopped) {
+				numActive--;
+			}
+		}
+	}
+
+	return numActive > 0;
+}
+
 static void loop(void) {
-	//printf("w\n");
+	if (!hasRunningTracks(&context)) {
+		EM_ASM(BlipKit.emitEvent('done'));
+	}
 }
 
 /*static BKInt fill_audio (void* ctx, Uint8* stream, int len) {
@@ -270,7 +298,7 @@ int main(int argc, char const* const argv[]) {
 
 	//SDL_PauseAudio(0);
 
-	EM_ASM(BlipKit.ready());
+	EM_ASM(BlipKit.emitEvent('ready'));
 
 	emscripten_set_main_loop(loop, 0, 0);
 

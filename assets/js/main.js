@@ -1,9 +1,11 @@
 window.BlipKit = {
 	readyEvent: () => {
 		controller.init();
+		console.log('ready');
 	},
 	doneEvent: () => {
 		controller.stop();
+		console.log('stop');
 	},
 	emitEvent: (name, args) => {
 		const eventName = name + 'Event';

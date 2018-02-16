@@ -133,6 +133,8 @@ class BlipKitController {
 	}
 
 	run() {
+		console.log('run');
+
 		this.clearErrors();
 
 		const source = this.editor.getValue();
@@ -141,9 +143,9 @@ class BlipKitController {
 		if (result === 0) {
 			this.module._startContext();
 
-			setTimeout(() => {
+			//setTimeout(() => {
 				this.connectNode();
-			}, 100);
+			//}, 100);
 
 		}
 	}

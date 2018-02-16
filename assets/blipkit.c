@@ -20,6 +20,8 @@ static BKTKCompiler compiler;
 static BKTKContext context;
 static BKTKTokenizer tokenizer;
 
+static BKInt isRunning = 0;
+
 /*
 EMSCRIPTEN_KEEPALIVE
 BKInt setWaveform(BKEnum waveform) {
@@ -217,13 +219,22 @@ int startContext(void) {
 		fprintf(stderr, "Attaching context failed (%s)\n", BKStatusGetName(res));
 	}
 
+	if (res == 0) {
+		isRunning = 1;
+	}
+
 	return res;
+}
+
+static void emitDone(void) {
+	EM_ASM(BlipKit.emitEvent('done'));
 }
 
 EMSCRIPTEN_KEEPALIVE
 int stopContext(void) {
 	BKTKContextDetach(&context);
 	BKDispose(&context);
+	isRunning = 0;
 }
 
 static BKInt hasRunningTracks(BKTKContext const* ctx) {
@@ -247,8 +258,9 @@ static BKInt hasRunningTracks(BKTKContext const* ctx) {
 }
 
 static void loop(void) {
-	if (!hasRunningTracks(&context)) {
-		EM_ASM(BlipKit.emitEvent('done'));
+	if (isRunning && !hasRunningTracks(&context)) {
+		isRunning = 0;
+		emitDone();
 	}
 }
 

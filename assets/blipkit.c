@@ -40,6 +40,9 @@ BKInt generate(int length) {
 	if (result > 0) {
 		deinterlaceInt16Float(buffer, bufferFloat, length, numChannels);
 	}
+	else {
+		memset(bufferFloat, 0, sizeof(*bufferFloat) * length * numChannels);
+	}
 
 	return result;
 }
@@ -92,12 +95,12 @@ int compileSource(char const* source) {
 		// end tokenizer
 		BKTKTokenizerPutChars (&tokenizer, NULL, 0, (BKTKPutTokenFunc) putToken, &parser);
 
-		if (BKTKTokenizerHasError(&tokenizer)) {
-			fprintf(stderr, "%s\n", tokenizer.buffer);
+		if (BKTKParserHasError(&parser)) {
+			fprintf(stderr, "%s\n", parser.buffer);
 			res = -1;
 		}
-		else if (BKTKParserHasError(&parser)) {
-			fprintf(stderr, "%s\n", parser.buffer);
+		else if (BKTKTokenizerHasError(&tokenizer)) {
+			fprintf(stderr, "%s\n", tokenizer.buffer);
 			res = -1;
 		}
 

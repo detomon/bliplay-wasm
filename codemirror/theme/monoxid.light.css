@@ -1,0 +1,27 @@
+/* Theme: monoxid-light */
+
+.cm-s-monoxid-light .CodeMirror-activeline .CodeMirror-gutter-elt,
+.cm-s-monoxid-light .CodeMirror-activeline .CodeMirror-gutter-elt .CodeMirror-foldgutter-folded,
+.cm-s-monoxid-light .CodeMirror-activeline .CodeMirror-gutter-elt .CodeMirror-foldgutter-open { color: #a7adba; background: #4f5b66; }
+.cm-s-monoxid-light .CodeMirror-gutters { background: white; border-right-color: #d0d0d0; color: #d0d0d0;  }
+.cm-s-monoxid-light.CodeMirror { color: #303030; }
+.cm-s-monoxid-light.CodeMirror { background: white url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcgdmVyc2lvbj0iMS4xIiB3aWR0aD0iNDhweCIgaGVpZ2h0PSI0OHB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgoJPHBhdGggZmlsbD0iI2Y1ZjVmNSIgZD0iTTE2IDQgTDE2IDggOCAwIDEyIDB6IE0xNiAxMiAxNiAxNiAwIDAgNCAweiBNMTIgMTYgOCAxNiAwIDggMCA0eiBNNCAxNiAwIDE2IDAgMTJ6Ij48L3BhdGg+Cjwvc3ZnPg==) top fixed; }
+
+.cm-s-monoxid-light .CodeMirror-cursor { border-left: 1px solid #c0c5ce; }
+.cm-s-monoxid-light.cm-fat-cursor .CodeMirror-cursor { background: #c0c5ce; }
+.cm-s-monoxid-light .cm-animate-fat-cursor { background-color: #c0c5ce; }
+
+.cm-s-monoxid-light .CodeMirror-activeline-background { background: #65737e30 !important; }
+.cm-s-monoxid-light .CodeMirror-selected { background: #4f5b66; }
+.cm-s-monoxid-light .cm-comment { color: #b0b0b0; }
+.cm-s-monoxid-light .cm-string { color: #707070; }
+.cm-s-monoxid-light .cm-qualifier { color: #7f7f7f; }
+.cm-s-monoxid-light .cm-tag { color: #7f7f7f; }
+.cm-s-monoxid-light .cm-attribute { color: #7f7f7f; }
+.cm-s-monoxid-light .cm-number { color: #7f7f7f; }
+.cm-s-monoxid-light .cm-keyword { color: #7f7f7f; }
+.cm-s-monoxid-light .cm-operator { color: #7f7f7f; }
+.cm-s-monoxid-light .cm-error { background: rgba(0, 0, 0, 0.2); color: #7f7f7f; }
+.cm-s-monoxid-light .cm-invalidchar { background: rgba(0, 0, 0, 0.2); color: #7f7f7f; }
+.cm-s-monoxid-light .cm-variable { color: #7f7f7f; }
+.cm-s-monoxid-light .cm-variable-2 { color: #7f7f7f; }

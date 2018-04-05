@@ -133,8 +133,6 @@ class BlipKitController {
 	}
 
 	run() {
-		console.log('run');
-
 		this.clearErrors();
 
 		const source = this.editor.getValue();

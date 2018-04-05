@@ -1,6 +1,7 @@
 :root {
+	--text-color: #505050;
 	--input-text-color: #a0a0a0;
-	--background-color: #343d46;
+	--background-color: white;
 }
 
 *, *:after, *:before {
@@ -14,6 +15,7 @@ html, body {
 	font-family: Helvetica, sans-serif;
 	font-size: 15px;
 	background: var(--background-color);
+	color: var(--text-color);
 }
 
 .wrapper {
@@ -29,7 +31,6 @@ html, body {
 	flex-wrap: wrap;
 	justify-content: center;
 	background: var(--background-color);
-	color: #f0f0f0;
 }
 
 .controls-wrapper .control {

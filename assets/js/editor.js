@@ -6,6 +6,6 @@ controller.editor = CodeMirror.fromTextArea(sourceElement, {
 	lineNumbers: true,
 	matchBrackets: true,
     foldGutter: true,
-	theme: 'base16-ocean-dark',
+	theme: 'monoxid-light',
     gutters: ['note-gutter', 'CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
 });

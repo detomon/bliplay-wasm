@@ -75,6 +75,9 @@ int compileSource(char const* source) {
 	BKTKParserNode* nodeTree;
 	size_t const length = strlen(source);
 
+	memset(buffer, 0, sizeof(*buffer) * length * numChannels);
+	memset(bufferFloat, 0, sizeof(*bufferFloat) * length * numChannels);
+
 	BKDispose(&context);
 
 	if ((res = BKTKParserInit(&parser)) != 0) {
@@ -154,7 +157,6 @@ static void emitDone(void) {
 EMSCRIPTEN_KEEPALIVE
 int stopContext(void) {
 	BKTKContextDetach(&context);
-	BKDispose(&context);
 	isRunning = 0;
 }
 

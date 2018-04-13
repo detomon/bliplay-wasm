@@ -1,4 +1,6 @@
-# BlipKit WebAssembly Version
+# bliplay WebAssembly
+
+Contains a WebAssembly version of [bliplay](https://github.com/detomon/bliplay).
 
 > ---
 >
@@ -8,11 +10,11 @@
 
 ## Demo
 
-[BlipKit-wasm](https://detomon.github.io/BlipKit-wasm/)
+[bliplay-wasm](https://detomon.github.io/bliplay-wasm/)
 
 ## Setup
 
-Checkout submodules:
+Checkout the submodules:
 
 ```sh
 git submodule update --init --recursive
@@ -51,7 +53,7 @@ $ make
 
 ## Running
 
-You can run `index.html` on a local webserver. Opening it directly from the file system may not work.
+You can now run `index.html` on a local webserver. Opening it directly from the file system may not work.
 
 ## Some Articles
 

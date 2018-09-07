@@ -20,6 +20,8 @@ static BKTKContext context;
 static BKTKTokenizer tokenizer;
 
 static BKInt isRunning = 0;
+static BKInt isInitialized = 0;
+static BKInt wasCompiled = 0;
 
 EMSCRIPTEN_KEEPALIVE
 float const* getBuffer() {
@@ -55,11 +57,34 @@ BKTime getTime(void) {
 	return ctx.currentTime;
 }
 
-static void initialize(BKInt numChannels, BKInt sampleRate) {
-	BKContextInit(&ctx, numChannels, sampleRate);
+EMSCRIPTEN_KEEPALIVE
+BKInt initialize(BKInt numChannels, BKInt sampleRate) {
+	BKInt res;
 
-	buffer = calloc(sizeof(BKFrame[numChannels]), maxBufferSize);
-	bufferFloat = calloc(sizeof(float[numChannels]), maxBufferSize);
+	if (isInitialized) {
+		fprintf(stderr, "Already initialized\n");
+		return -1;
+	}
+
+	if ((res = BKContextInit(&ctx, numChannels, sampleRate)) != 0) {
+		fprintf(stderr, "BKContextInit failed (%s)\n", BKStatusGetName(res));
+	}
+
+	if (res == 0) {
+		buffer = calloc(sizeof(BKFrame[numChannels]), maxBufferSize);
+		bufferFloat = calloc(sizeof(float[numChannels]), maxBufferSize);
+
+		if (!buffer || !bufferFloat) {
+			fprintf(stderr, "Allocation error\n");
+			res = -1;
+		}
+	}
+
+	if (res == 0) {
+		isInitialized = 1;
+	}
+
+	return res;
 }
 
 static BKInt putToken(BKTKToken const* token, BKTKParser* parser) {
@@ -73,10 +98,15 @@ static BKInt putToken(BKTKToken const* token, BKTKParser* parser) {
 }
 
 EMSCRIPTEN_KEEPALIVE
-int compileSource(char const* source) {
+BKInt compileSource(char const* source) {
 	BKInt res = 0;
 	BKTKParserNode* nodeTree;
 	size_t const length = strlen(source);
+
+	if (!isInitialized) {
+		fprintf(stderr, "initialize was not called\n");
+		return -1;
+	}
 
 	memset(lineNumbers, 0, sizeof(lineNumbers));
 	memset(activeLineNumbers, 0, sizeof(activeLineNumbers));
@@ -138,12 +168,26 @@ int compileSource(char const* source) {
 	BKDispose(&parser);
 	BKDispose(&compiler);
 
+	if (res == 0) {
+		wasCompiled = 1;
+	}
+
 	return res;
 }
 
 EMSCRIPTEN_KEEPALIVE
 int startContext(void) {
 	BKInt res = 0;
+
+	if (!isInitialized) {
+		fprintf(stderr, "initialize was not called\n");
+		return -1;
+	}
+
+	if (!wasCompiled) {
+		fprintf(stderr, "no compiled context\n");
+		return -1;
+	}
 
 	if ((res = BKTKContextAttach(&context, &ctx)) != 0) {
 		fprintf(stderr, "Attaching context failed (%s)\n", BKStatusGetName(res));
@@ -219,8 +263,6 @@ static void loop(void) {
 
 EMSCRIPTEN_KEEPALIVE
 int main(int argc, char const* const argv[]) {
-	initialize(numChannels, sampleRate);
-
 	EM_ASM(BlipKit.emitEvent('ready'));
 
 	emscripten_set_main_loop(loop, 0, 0);

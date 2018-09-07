@@ -1,28 +1,6 @@
 class BlipKitController {
 	constructor(module) {
-		const numFrames = 1024;
-		const numChannels = 2;
-
 		this.module = module;
-		this.context = new (window.AudioContext || window.webkitAudioContext)();
-		this.source = this.context.createBufferSource();
-		this.generatorNode = this.context.createScriptProcessor(numFrames, numChannels, numChannels);
-
-		this.generatorNode.onaudioprocess = (audioProcessingEvent) => {
-			const audioBuffer = this._getBuffer();
-			const inputBuffer = audioProcessingEvent.inputBuffer;
-			const outputBuffer = audioProcessingEvent.outputBuffer;
-
-			this.generate(inputBuffer.length);
-
-			for (let channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
-				const outputData = outputBuffer.getChannelData(channel);
-				const channelData = this.heapFloat32Array(audioBuffer, inputBuffer.length * channel, inputBuffer.length);
-
-				outputData.set(channelData);
-			}
-		};
-
 		this.currentEditor = null;
 
 		this.printErr = (line) => {
@@ -41,6 +19,7 @@ class BlipKitController {
 	connectNode() {
 		this.source.connect(this.generatorNode);
 		this.generatorNode.connect(this.context.destination);
+		this.context.resume();
 	}
 
 	disconnectNode() {
@@ -78,6 +57,32 @@ class BlipKitController {
 	}
 
 	init() {
+		const numFrames = 2048;
+		const numChannels = 2;
+
+		this.context = new (window.AudioContext || window.webkitAudioContext)();
+		this.source = this.context.createBufferSource();
+		this.generatorNode = this.context.createScriptProcessor(numFrames, numChannels, numChannels);
+
+		if (this._initialize(numChannels, this.context.sampleRate) !== 0) {
+			console.error('Unable to initialize context');
+			return;
+		}
+
+		this.generatorNode.onaudioprocess = (audioProcessingEvent) => {
+			const audioBuffer = this._getBuffer();
+			const inputBuffer = audioProcessingEvent.inputBuffer;
+			const outputBuffer = audioProcessingEvent.outputBuffer;
+
+			this.generate(inputBuffer.length);
+
+			for (let channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
+				const outputData = outputBuffer.getChannelData(channel);
+				const channelData = this.heapFloat32Array(audioBuffer, inputBuffer.length * channel, inputBuffer.length);
+
+				outputData.set(channelData);
+			}
+		};
 	}
 
 	runSource(editor, sourceCode) {

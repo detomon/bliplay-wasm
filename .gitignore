@@ -3,9 +3,12 @@
 *.log
 *.o
 *.trs
+*.wasm.map
+*.wasm.pre
+*.wast
 *~
-.DS_Store
 .deps
+.DS_Store
 /aclocal.m4
 /ar-lib
 /compile

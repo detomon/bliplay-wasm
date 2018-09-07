@@ -26,9 +26,15 @@ class BlipKitController {
 		this.currentEditor = null;
 
 		this.printErr = (line) => {
-			if (!this.currentEditor.setError(line)) {
-				console.error(line);
+			if (this.currentEditor) {
+				this.currentEditor.setError(line);
 			}
+
+			console.error(line);
+		};
+
+		this.print = (line) => {
+			console.log(line);
 		};
 	}
 
@@ -57,6 +63,7 @@ class BlipKitController {
 	startContext() {
 		this._startContext();
 		this.connectNode();
+		console.debug('Context start');
 	}
 
 	stopContext() {
@@ -66,15 +73,17 @@ class BlipKitController {
 		setTimeout(() => {
 			this.disconnectNode();
 		}, 100);
+
+		console.debug('Context stop');
 	}
 
 	init() {
 	}
 
 	runSource(editor, sourceCode) {
-		this.currentEditor = editor;
-
 		let result = this.ccall('compileSource', null, ['string'], [sourceCode]);
+
+		this.currentEditor = editor;
 
 		if (result === 0) {
 			this.startContext();
@@ -87,19 +96,26 @@ class BlipKitController {
 
 	readyEvent() {
 		this.init();
-		console.log('ready');
+		console.debug('Controller ready');
 	}
 
 	doneEvent() {
 		this.stop();
-		console.log('stop');
 	}
 
-	emitEvent(name, args) {
+	lineNumberEvent(trackIdx, lineNumber) {
+		this.currentEditor.setActiveLineNumber(trackIdx, lineNumber)
+	}
+
+	emitEvent(name) {
 		const eventName = name + 'Event';
+		const args = [].slice.call(arguments, 1);
 
 		if (this[eventName]) {
-			this[eventName](args);
+			this[eventName].apply(this, args);
+		}
+		else {
+			console.warn('Unable to deliver event', eventName, args);
 		}
 	}
 }

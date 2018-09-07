@@ -14,6 +14,19 @@ files.forEach((file) => {
 	fileSelect.appendChild(option);
 });
 
+function setSource(source) {
+	let textarea = document.querySelector('.code-editor');
+	let editor = textarea.editorInstance;
+
+	editor.setValue(source);
+}
+
+function setTitle(title) {
+	let fileTitle = document.querySelector('#file-title');
+
+	fileTitle.textContent = title;
+}
+
 function changeFile(target) {
 	const option = target.options[target.selectedIndex];
 	const file = option.file;
@@ -23,8 +36,8 @@ function changeFile(target) {
 	fetch(file.path).then((response) => {
 		return response.text();
 	}).then((source) => {
-		controller.editor.setValue(source);
-		fileTitle.textContent = file.title;
+		setSource(source);
+		setTitle(file.title);
 	}).then(() => {
 		target.disabled = false;
 	});
@@ -40,7 +53,7 @@ if (sourceRaw) {
 	const source = unescape(sourceRaw[1]);
 
 	if (source) {
-		controller.editor.setValue(source);
+		setSource(source);
 	}
 }
 else {

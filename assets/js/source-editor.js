@@ -1,6 +1,7 @@
 class SourceEditor {
 	constructor(textarea, options) {
 		this.widgets = [];
+		this.breakpoints = {};
 		this.editor = CodeMirror.fromTextArea(textarea, options);
 		textarea.editorInstance = this.editor;
 	}
@@ -13,6 +14,11 @@ class SourceEditor {
 		});
 
 		widgets.length = 0;
+	}
+
+	clearBreakpoints() {
+		this.breakpoints = {};
+		this.editor.clearGutter('breakpoints');
 	}
 
 	createOffsetIndicator(column) {
@@ -70,5 +76,40 @@ class SourceEditor {
 		}
 
 		return false;
+	}
+
+	setActiveLineNumber(trackIdx, lineNumber) {
+		function makeMarker() {
+			var marker = document.createElement('div');
+
+			marker.className = 'line-breakpoint';
+			marker.innerHTML = '.';
+
+			return marker;
+		}
+
+		let number = lineNumber - 1;
+		let editor = this.editor;
+		let breakpoints = this.breakpoints;
+
+		// clear breakpoint
+		if (breakpoints[trackIdx] !== undefined) {
+			let currentLine = breakpoints[trackIdx];
+			let lineInfo = editor.lineInfo(currentLine);
+
+			if (lineInfo && lineInfo.gutterMarkers && lineInfo.gutterMarkers.breakpoints) {
+				editor.setGutterMarker(currentLine, 'breakpoints', null);
+			}
+		}
+
+		breakpoints[trackIdx] = number;
+
+		let marker = makeMarker();
+		editor.setGutterMarker(number, 'breakpoints', marker);
+	}
+
+	reset() {
+		this.clearErrors();
+		this.clearBreakpoints();
 	}
 }

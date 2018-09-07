@@ -9,7 +9,7 @@ document.querySelector('#start').addEventListener('click', function () {
 	let editor = textarea.editorInstance;
 	let source = editor.getValue();
 
-	textarea.sourceEditor.clearErrors();
+	textarea.sourceEditor.reset();
 
 	window.BlipKit.runSource(textarea.sourceEditor, source);
 });

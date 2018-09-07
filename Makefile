@@ -6,9 +6,9 @@ MODULE_NAME = BlipKit
 TARGET_MAIN = $(DIR)/$(NAME).js
 TARGETS_ALL = $(TARGET_MAIN) $(TARGET_MAIN:%.js=%.wasm)
 
-BKSRC = $(DIR)/bliplay/BlipKit/src
-BPSRC = $(DIR)/bliplay/parser
-BUSRC = $(DIR)/bliplay/utility
+BKSRC = bliplay/BlipKit/src
+BPSRC = bliplay/parser
+BUSRC = bliplay/utility
 
 SOURCES = $(DIR)/$(NAME).c
 SOURCES += $(wildcard $(BKSRC)/*.c)

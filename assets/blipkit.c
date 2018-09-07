@@ -128,6 +128,10 @@ BKInt compileSource(char const* source) {
 		fprintf(stderr, "BKTKCompilerInit failed (%s)\n", BKStatusGetName(res));
 	}
 
+	if ((res = BKTKContextInit(&context, 0)) != 0) {
+		fprintf(stderr, "BKTKContextInit failed (%s)\n", BKStatusGetName(res));
+	}
+
 	if (res == 0) {
 		res = BKTKTokenizerPutChars (&tokenizer, (uint8_t const*) source, length, (BKTKPutTokenFunc) putToken, &parser);
 
@@ -152,10 +156,6 @@ BKInt compileSource(char const* source) {
 			}
 
 			if (res == 0) {
-				if ((res = BKTKContextInit(&context, 0)) != 0) {
-					fprintf(stderr, "BKTKCompilerInit failed (%s)\n", BKStatusGetName(res));
-				}
-
 				if ((res = BKTKContextCreate(&context, &compiler)) != 0) {
 					fprintf(stderr, "Creating context failed (%s)\n", BKStatusGetName(res));
 					fprintf(stderr, "%s\n", (char const*)context.error.str);

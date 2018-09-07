@@ -38,7 +38,7 @@ Edit `~/.emscripten` and make sure `LLVM_ROOT` points to the LLVM binaries insid
 ...
 # this helps projects using emscripten find it
 EMSCRIPTEN_ROOT = os.path.expanduser(os.getenv('EMSCRIPTEN', '/usr/local/Cellar/emscripten/1.37.25/libexec')) # directory
-LLVM_ROOT = '/usr/local/Cellar/emscripten/1.37.25/libexec/llvm/bin'
+LLVM_ROOT = '/usr/local/Cellar/emscripten/1.38.11/libexec/llvm/bin'
 BINARYEN_ROOT = os.path.expanduser(os.getenv('BINARYEN', '')) # if not set, we will use it from ports
 ...
 ```

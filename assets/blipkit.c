@@ -10,6 +10,9 @@ static BKInt maxBufferSize = 4096;
 static BKFrame* buffer;
 static float* bufferFloat;
 static BKContext ctx;
+static BKInt lineNumbers[255];
+static BKInt activeLineNumbers[255];
+static BKInt lineNumbersCount = 0;
 
 static BKTKParser parser;
 static BKTKCompiler compiler;
@@ -75,8 +78,11 @@ int compileSource(char const* source) {
 	BKTKParserNode* nodeTree;
 	size_t const length = strlen(source);
 
-	memset(buffer, 0, sizeof(*buffer) * length * numChannels);
-	memset(bufferFloat, 0, sizeof(*bufferFloat) * length * numChannels);
+	memset(lineNumbers, 0, sizeof(lineNumbers));
+	memset(activeLineNumbers, 0, sizeof(activeLineNumbers));
+	memset(buffer, 0, sizeof(*buffer) * maxBufferSize * numChannels);
+	memset(bufferFloat, 0, sizeof(*bufferFloat) * maxBufferSize * numChannels);
+	lineNumbersCount = 0;
 
 	BKDispose(&context);
 
@@ -93,7 +99,7 @@ int compileSource(char const* source) {
 	}
 
 	if (res == 0) {
-		res = BKTKTokenizerPutChars (&tokenizer, source, length, (BKTKPutTokenFunc) putToken, &parser);
+		res = BKTKTokenizerPutChars (&tokenizer, (uint8_t const*) source, length, (BKTKPutTokenFunc) putToken, &parser);
 
 		// end tokenizer
 		BKTKTokenizerPutChars (&tokenizer, NULL, 0, (BKTKPutTokenFunc) putToken, &parser);
@@ -116,7 +122,7 @@ int compileSource(char const* source) {
 			}
 
 			if (res == 0) {
-				if ((res = BKTKContextInit(&context, 0)) != 0) {
+				if ((res = BKTKContextInit(&context, BKTKContextOptionTimingDataMask)) != 0) {
 					fprintf(stderr, "BKTKCompilerInit failed (%s)\n", BKStatusGetName(res));
 				}
 
@@ -154,6 +160,10 @@ static void emitDone(void) {
 	EM_ASM(BlipKit.emitEvent('done'));
 }
 
+static void emitLineNumber(BKInt trackIdx, BKInt lineno) {
+	EM_ASM({BlipKit.emitEvent('lineNumber', $0, $1)}, trackIdx, lineno);
+}
+
 EMSCRIPTEN_KEEPALIVE
 int stopContext(void) {
 	BKTKContextDetach(&context);
@@ -180,10 +190,30 @@ static BKInt hasRunningTracks(BKTKContext const* ctx) {
 	return numActive > 0;
 }
 
+static void updateLineNumbers(BKTKContext const* ctx) {
+	BKTKTrack const* track;
+
+	for (BKInt i = 0; i < ctx -> tracks.len; i ++) {
+		track = *(BKTKTrack const* const*) BKArrayItemAt(&ctx->tracks, i);
+
+		if (track) {
+			if (track->lineno != activeLineNumbers[i]) {
+				activeLineNumbers[i] = track->lineno;
+				lineNumbers[lineNumbersCount++] = track->lineno;
+				emitLineNumber(i, track->lineno);
+			}
+		}
+	}
+}
+
 static void loop(void) {
-	if (isRunning && !hasRunningTracks(&context)) {
-		isRunning = 0;
-		emitDone();
+	if (isRunning) {
+		updateLineNumbers(&context);
+
+		if (!hasRunningTracks(&context)) {
+			isRunning = 0;
+			emitDone();
+		}
 	}
 }
 

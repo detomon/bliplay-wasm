@@ -18,8 +18,10 @@ SOURCES += $(wildcard $(BUSRC)/*.c)
 EXPORTS = ["_main"]
 RUNTIME_EXPORTS = ["ccall","cwrap"]
 
-#CFLAGS = -O2 -Wall -I./$(BKSRC) -I./$(BPSRC) -I./$(BUSRC)
-CFLAGS = -O0 -g -Wall -I./$(BKSRC) -I./$(BPSRC) -I./$(BUSRC)
+CFLAGS = -O2 -Wall -I./$(BKSRC) -I./$(BPSRC) -I./$(BUSRC)
+
+# Debug
+#CFLAGS = -O0 -g -Wall -I./$(BKSRC) -I./$(BPSRC) -I./$(BUSRC)
 
 OTHER_FLAGS = \
 	-s ASSERTIONS=2 \

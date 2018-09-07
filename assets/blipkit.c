@@ -152,7 +152,7 @@ BKInt compileSource(char const* source) {
 			}
 
 			if (res == 0) {
-				if ((res = BKTKContextInit(&context, BKTKContextOptionTimingDataMask)) != 0) {
+				if ((res = BKTKContextInit(&context, 0)) != 0) {
 					fprintf(stderr, "BKTKCompilerInit failed (%s)\n", BKStatusGetName(res));
 				}
 

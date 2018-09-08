@@ -4,8 +4,29 @@ const files = [{
 	title: 'Power On',
 	path: 'files/power-on.blip',
 }, {
-	title: 'Fully Dimmable',
-	path: 'files/fully-dimmable-v3.blip',
+	title: 'Don\'t Eat Flashcards',
+	path: 'files/dont-eat-flashcards.blip',
+}, {
+	title: 'Short-Fused Bombs',
+	path: 'files/short-fused-bombs.blip',
+}, {
+	title: 'Ghost Bouncer',
+	path: 'files/ghost-bouncer.blip',
+}, {
+	title: 'Hyperion Star Racer',
+	path: 'files/hyperion-star-racer.blip',
+}, {
+	title: 'Killer Squid',
+	path: 'files/killer-squid.blip',
+}, {
+	title: 'WYSIWYG',
+	path: 'files/wysiwyg.blip',
+}, {
+	title: 'Cave XII',
+	path: 'files/cave-xii.blip',
+}, {
+	title: 'Monster Carousel',
+	path: 'files/monster-carousel.blip',
 }, {
 	title: 'Dirt Planet',
 	path: 'files/dirt-planet.blip',

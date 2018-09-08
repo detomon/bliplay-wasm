@@ -130,19 +130,12 @@ class BliplayController {
 	}
 
 	_filePutContents(path, data) {
-		let memory = this._malloc(data.length);
-
-		this.setHeapInt8Array(memory, data);
-		let result = this.ccall('writeFile', null, ['string', 'number', 'number'], [path, memory, data.length]);
-
-		this._free(memory);
-
-		return result;
+		return this.ccall('writeFile', null, ['string', 'array', 'number'], [path, data, data.length]);
 	}
 
 	_loadSamples(paths) {
 		let fetches = paths.map((path) => {
-			console.log('Loading sample', path);
+			console.debug('Loading sample', path);
 
 			return fetch('assets/sound/' + path).then((result) => {
 				return result.arrayBuffer();

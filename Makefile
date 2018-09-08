@@ -4,7 +4,7 @@ NAME = bliplay
 SRC = src
 DIR = assets
 MODULE_NAME = Bliplay
-TARGET_MAIN = $(DIR)/$(NAME).js
+TARGET_MAIN = $(DIR)/js/$(NAME).js
 TARGETS_ALL = $(TARGET_MAIN) $(TARGET_MAIN:%.js=%.wasm)
 
 BKSRC = bliplay/BlipKit/src
@@ -19,7 +19,7 @@ SOURCES += $(wildcard $(BUSRC)/*.c)
 EXPORTS = ["_main"]
 RUNTIME_EXPORTS = ["ccall","cwrap","UTF8ArrayToString"]
 
-CFLAGS = -O2 -Wall -I./$(BKSRC) -I./$(BPSRC) -I./$(BUSRC)
+CFLAGS = -O2 -Wall -I./$(BKSRC) -I./$(BPSRC) -I./$(BUSRC) -DBK_USE_64_BIT=0
 
 # Debug
 #CFLAGS = -O0 -g -Wall -I./$(BKSRC) -I./$(BPSRC) -I./$(BUSRC)

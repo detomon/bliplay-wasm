@@ -6,6 +6,9 @@ const files = [{
 }, {
 	title: 'Fully Dimmable',
 	path: 'files/fully-dimmable-v3.blip',
+}, {
+	title: 'Dirt Planet',
+	path: 'files/dirt-planet.blip',
 }];
 
 files.forEach((file) => {

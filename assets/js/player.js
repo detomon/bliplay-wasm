@@ -6,7 +6,7 @@ const editors = document.querySelectorAll('.code-editor');
 		lineNumbers: true,
 		matchBrackets: true,
 		foldGutter: true,
-		theme: 'monoxid-light',
+		theme: 'base16-ocean-dark',
 		gutters: ['note-gutter', 'breakpoints', 'CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
 	});
 });

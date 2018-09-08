@@ -1,0 +1,650 @@
+st:30 % 120 BPM
+
+[instr:default
+	adsr:0:0:255:48
+]
+
+[instr:organ
+	adsr:0:0:255:36
+]
+
+[instr:lead
+	adsr:0:0:255:12
+	vnv:0:255:<:240:255:>:30:0:30:48:30:0
+]
+
+[samp:drum1
+	load:wav:"drum1.wav"
+]
+
+[samp:drum2
+	load:wav:"drum2.wav"
+]
+
+[samp:snare1
+	load:wav:"snare1.wav"
+]
+
+[samp:hat1
+	load:wav:"hat1.wav"
+]
+
+[samp:hat2
+	load:wav:"hat2.wav"
+]
+
+[samp:hat3
+	load:wav:"hat3.wav"
+]
+
+[samp:hat4
+	load:wav:"hat4.wav"
+]
+
+[samp:hat5
+	load:wav:"hat5.wav"
+]
+
+[samp:lead1
+	load:wav:"lead1.wav"
+]
+
+[samp:lead2
+	load:wav:"lead2.wav"
+]
+
+[samp:organ1
+	load:wav:"organ1.wav"
+]
+
+[samp:organ2
+	load:wav:"organ2.wav"
+]
+
+[samp:xylo
+	load:wav:"xylo.wav"
+]
+
+[samp:crotales
+	load:wav:"crotales.wav"
+]
+
+[samp:bass
+	load:wav:"bass.wav"
+]
+
+[samp:pluck
+	load:wav:"pluck.wav"
+]
+
+% Percussion 1
+[track:sample
+	[grp:0
+		d:drum1;a:c4;s:2;r
+		d:hat3;a:c4;s:2;r
+		d:snare1;a:c4;s:2;r
+		d:hat3;a:c4;s:1;r
+		d:drum1;a:c4;s:2;r
+		d:hat3;a:c4;s:2;r
+		d:hat3;a:c4;s:1;r
+		d:snare1;a:c4;s:2;r
+		d:hat3;a:c4;s:2;r
+	]
+
+	[grp:1
+		d:drum1;a:c4;s:2;r
+		d:hat3;a:c4;s:2;r
+		d:snare1;a:c4;s:2;r
+		d:hat3;a:c4;s:1;r
+		d:drum1;a:c4;s:2;r
+		d:hat3;a:c4;s:1;r
+		d:hat3;a:c4;s:1;r
+		d:hat3;a:c4;s:1;r
+		d:snare1;a:c4;s:2;r
+		d:hat3;a:c4;s:2;r
+	]
+
+	[grp:2
+		d:drum1;a:c4;s:2;r
+		d:hat3;a:c4;s:2;r
+		d:snare1;a:c4;s:2;r
+		d:hat3;a:c4;s:1;r
+		d:drum1;a:c4;s:2;r
+		d:hat3;a:c4;s:2;r
+		d:hat3;a:c4;s:1;r
+		d:snare1;a:c4;s:4;r
+	]
+
+	[grp:5
+		g:0
+		g:0
+		g:1
+		g:2
+	]
+
+	[grp:6
+		g:0
+		g:0
+		g:1
+		s:16
+	]
+
+	g:5
+	g:5
+	g:5
+	g:5
+	g:5
+	g:5
+	g:5
+	stt:30
+	g:6
+	stt:30
+
+	x
+]
+
+% Percussion 2
+[track:sample
+	[grp:0
+		d:hat1;a:c4;s:2;r
+		d:hat5;a:c4;s:2;r
+		d:hat2;a:c4;s:2;r
+		d:hat4;a:c4;s:2;r
+		d:hat1;a:c4;s:1;r
+		d:drum2;a:c4;s:1;r
+		d:hat5;a:c4;s:1;r
+		d:hat4;a:c4;s:1;r
+		d:hat2;a:c4;s:2;r
+		d:drum2;a:c4;s:2;r
+	]
+
+	[grp:1
+		d:hat1;a:c4;s:2;r
+		d:hat5;a:c4;s:2;r
+		d:hat2;a:c4;s:2;r
+		d:hat4;a:c4;s:1;r
+		d:hat1;a:c4;s:2;r
+		d:drum2;a:c4;s:1;r
+		d:hat5;a:c4;s:1;r
+		d:hat4;a:c4;s:1;r
+		d:hat2;a:c4;s:2;r
+		d:drum2;a:c4;s:2;r
+	]
+
+	[grp:5
+		g:0
+		g:1
+		g:0
+		g:1
+	]
+
+	[grp:6
+		g:0
+		g:1
+		g:0
+		g:1
+	]
+
+	g:5
+	g:5
+	g:5
+	g:5
+	g:5
+	g:5
+	g:5
+	stt:30
+	g:6
+	stt:30
+
+	x
+]
+
+% Bass
+[track:sample
+	[grp:0
+		a:b3;s:3;r;s:1
+		rt:6/8;a:b3;s:2;r
+		a:g4;s:1;r
+		rt:6/8;a:f#3;s:2;r % +1
+
+		a:g4;s:1;r
+		a:f#3;s:2;r
+		a:g4;s:2;r
+		rt:6/8;a:g3;s:2;r
+
+		a:b3;s:3;r;s:1
+		rt:6/8;a:b3;s:2;r
+		a:g4;s:1;r
+		rt:6/8;a:f#3;s:2;r % +1
+
+		a:g4;s:1;r
+		a:f#3;s:2;r
+		a:g4;s:1;r
+		a:c#4;s:1;r
+		rt:6/8;a:d4;s:2;r
+
+		a:a3;s:3;r;s:1
+		rt:6/8;a:a3;s:2;r
+		a:e4;s:1;r
+		rt:6/8;a:f#3;s:2;r % +1
+
+		a:e4;s:1;r
+		a:f#3;s:2;r
+		a:e4;s:2;r
+		rt:6/8;a:g3;s:2;r
+
+		a:a#3;s:3;r;s:1
+		rt:6/8;a:a#3;s:2;r
+		a:g4;s:1;r
+		rt:6/8;a:g3;s:2;r % +1
+
+		a:g4;s:1;r
+		a:g3;s:2;r
+		a:g4;s:1;r
+		a:c#4;s:1
+		rt:6/8;a:d4;s:2;r
+	]
+
+	d:bass
+	i:default
+	v:212
+	e:pr:36
+
+	g:0
+	g:0
+	g:0
+	g:0
+	g:0
+	g:0
+	s:64
+	stt:30
+	s:64
+	stt:30
+
+	x
+]
+
+% Organ 1
+[track:sample
+	[grp:0
+		rt:6/8;d:organ1;a:b3;s:2;r
+		d:organ2;a:d4;s:1;r;s:1
+		rt:6/8;d:organ1;a:b3;s:2;r
+		d:organ2;a:d4;s:1;r;s:1
+		rt:6/8;d:organ1;a:b3;s:2;r
+		d:organ2;a:d4;s:1;r;s:1
+		rt:6/8;d:organ1;a:b3;s:2;r
+		d:organ2;a:d4;s:1;r;s:1
+	]
+
+	[grp:1
+		rt:6/8;d:organ1;a:b3;s:2;r
+		d:organ2;a:d4;s:1;r;s:1
+		rt:6/8;d:organ1;a:b3;s:2;r
+		d:organ2;a:d4;s:1;r;s:1
+		rt:6/8;d:organ1;a:b3;s:2;r
+		s:2
+		rt:6/8;d:organ1;a:b3;s:2;r
+		d:organ2;a:f#4;s:1;r;s:1
+	]
+
+	[grp:2
+		rt:6/8;d:organ1;a:a3;s:2;r
+		d:organ2;a:c#4;s:1;r;s:1
+		rt:6/8;d:organ1;a:a3;s:2;r
+		d:organ2;a:c#4;s:1;r;s:1
+		rt:6/8;d:organ1;a:a3;s:2;r
+		d:organ2;a:c#4;s:1;r;s:1
+		rt:6/8;d:organ1;a:a3;s:2;r
+		d:organ2;a:c#4;s:1;r;s:1
+	]
+
+	[grp:3
+		rt:6/8;d:organ1;a:a#3;s:2;r
+		d:organ2;a:c#4;s:1;r;s:1
+		rt:6/8;d:organ1;a:a#3;s:2;r
+		d:organ2;a:c#4;s:1;r;s:1
+		rt:6/8;d:organ1;a:a#3;s:2;r
+		s:2
+		rt:6/8;d:organ1;a:a#3;s:2;r
+		d:organ2;a:f#4;s:1;r;s:1
+	]
+
+	[grp:4
+		rt:6/8;d:organ1;a:a#3;s:2;r
+		d:organ2;a:c#4;s:1;r;s:1
+		rt:6/8;d:organ1;a:a#3;s:2;r
+		d:organ2;a:c#4;s:1;r;s:1
+		d:organ1;a:a#3;s:4;r
+		s:4
+	]
+
+	[grp:5
+		g:0
+		g:1
+		g:2
+		g:3
+	]
+
+	[grp:6
+		g:0
+		g:1
+		g:2
+		g:4
+	]
+
+	i:organ
+	e:pr:36
+
+	g:5
+	g:5
+	s:64
+	s:64
+	s:64
+	s:64
+	g:5
+	stt:30
+	g:6
+	stt:30
+
+	x
+
+]
+
+% Organ 2
+[track:sample
+	[grp:0
+		s:2
+		d:organ2;a:f#4;s:1;r;s:1
+		s:2
+		d:organ2;a:f#4;s:1;r;s:1
+		s:4
+		d:organ2;a:f#4;s:1;r;s:1
+		d:organ2;a:f#4;s:1;r;s:1
+	]
+
+	[grp:1
+		s:2
+		d:organ2;a:f#4;s:1;r;s:1
+		s:2
+		d:organ2;a:f#4;s:1;r;s:1
+		s:1
+		d:organ2;a:f#4;s:1;r;s:2
+		d:organ2;a:d4;s:1;r;s:1
+		d:organ2;a:d4;s:1;r;s:1
+	]
+
+	[grp:2
+		s:2
+		d:organ2;a:e4;s:1;r;s:1
+		s:2
+		d:organ2;a:e4;s:1;r;s:1
+		s:4
+		d:organ2;a:e4;s:1;r;s:1
+		d:organ2;a:e4;s:1;r;s:1
+	]
+
+	[grp:3
+		s:2
+		d:organ2;a:f#4;s:1;r;s:1
+		s:2
+		d:organ2;a:f#4;s:1;r;s:1
+		s:1
+		d:organ2;a:f#4;s:1;r;s:2
+		d:organ2;a:c#4;s:1;r;s:1
+		d:organ2;a:c#4;s:1;r;s:1
+	]
+
+	[grp:4
+		s:2
+		d:organ2;a:f#4;s:1;r;s:1
+		s:2
+		d:organ2;a:f#4;s:1;r;s:1
+		s:8
+	]
+
+	[grp:5
+		g:0
+		g:1
+		g:2
+		g:3
+	]
+
+	[grp:6
+		g:0
+		g:1
+		g:2
+		g:4
+	]
+
+	i:organ
+	e:pr:36
+
+	g:5
+	g:5
+	s:64
+	s:64
+	s:64
+	s:64
+	g:5
+	stt:30
+	g:6
+	stt:30
+
+	x
+
+]
+
+% Xylophone
+[track:sample
+	[grp:0
+		a:g3;s:1;r
+		a:b3;s:1;r
+		a:a#3;s:1;r
+		a:g3;s:1;r
+		a:b3;s:2;r
+		a:a#3;s:1;r
+		a:g3;s:2;r
+		a:d#3;s:1;r
+		a:d3;s:2;r
+		a:b2;s:2;r
+		a:d#3;s:2;r
+
+		a:a#3;s:1;r
+		a:g3;s:1;r
+		a:b3;s:1;r
+		a:a#3;s:1;r
+		a:g3;s:2;r
+		a:b3;s:1;r
+		a:a#3;s:2;r
+		a:g3;s:1;r
+		a:b3;s:1;r
+		a:d4;s:1;r
+		a:c4;s:1;r
+		a:b3;s:1;r
+		a:a3;s:1;r;s:1
+
+		a:a3;s:1;r
+		a:d4;s:1;r
+		a:c#4;s:1;r
+		a:a3;s:1;r
+		a:d4;s:2;r
+		a:c#4;s:1;r
+		a:a3;s:2;r
+		a:d#3;s:1;r
+		a:d3;s:2;r
+		a:b2;s:2;r
+		a:d#3;s:2;r
+
+		a:a#3;s:1;r
+		a:g3;s:1;r
+		a:c#4;s:1;r
+		a:a#3;s:1;r
+		a:d4;s:2;r
+		a:c#4;s:1;r
+		a:a#3;s:2;r
+		a:d3;s:1;r
+		a:c#4;s:1;r
+		a:d4;s:1;r
+		a:c4;s:1;r
+		a:b3;a:a3;s:2;r
+		s:1
+	]
+
+	d:xylo
+	i:default
+	e:pr:36
+
+	g:0
+	g:0
+	s:64
+	s:64
+	g:0
+	g:0
+	s:64
+	stt:30
+	g:0
+	stt:30
+
+	x
+
+]
+
+% Crotales
+[track:sample
+	d:crotales
+	i:default
+	e:pr:36
+	v:128
+	pt:1200
+
+	g:0t5
+	g:0t5
+	s:64
+	s:64
+	s:64
+	s:64
+	s:64
+	stt:30
+	s:64
+	stt:30
+
+	x
+]
+
+% Lead 1 & 2
+[track:sample
+	[grp:0
+		a:b3;s:3;r;s:1
+		a:b3;s:2;r
+		rt:1/2;a:c#4;s:1;r
+		rt:5/2;a:d4;s:3;r
+		a:c#4;s:2;r
+		a:b3;s:2;r
+		a:a3;s:2;r
+
+		a:g3;s:4;r;
+		a:b3;s:2;r;
+		rt:1/2;a:f#3;s:1;r
+		a:f3;s:3;r
+		a:f#3;s:5;r;s:1
+
+		a:d3;s:4;r;
+		a:e3;s:2;r;
+		a:d#3;s:1;r;
+		rt:5/2;a:g3;s:3;r
+		a:e3;s:2;r;
+		a:f#3;s:2;r;
+		rt:3/2;a:g3;s:2;
+
+		a:a#3;s:4;e:vb:1/2:0;e:vb:1/2:40:60;s:2;a:a#3-20;s:6;r;s:4
+		e:vb
+	]
+	[grp:1
+		a:b3;s:3;r;s:1
+		a:b3;s:2;r
+		rt:1/2;a:c#4;s:1;r
+		rt:5/2;a:d4;s:3;r
+		a:c#4;s:2;r
+		a:b3;s:2;r
+		a:a3;s:2;r
+
+		a:g3;s:4;r;
+		a:b3;s:2;r;
+		rt:1/2;a:f#3;s:1;r
+		a:f3;s:3;r
+		a:f#3;s:5;r;s:1
+
+		a:d3;s:4;r;
+		a:e3;s:2;r;
+		a:d#3;s:1;r;
+		rt:5/2;a:g3;s:3;r
+		a:e3;s:2;r;
+		a:f#3;s:2;r;
+		rt:3/2;a:a3;s:2;
+
+		a:e4;a:f#4;e:tr:1/2:0;e:tr:1/2:127:180;s:8;r;a:f#4;a:f#4-50;s:4;r;s:4
+		e:tr
+	]
+
+	[grp:10
+		a:b3;s:2;r;s:2
+		a:b3;s:1;r;s:1
+		rt:1/2;a:b3;s:1;r
+		rt:1/2;a:b3;s:1;r
+		s:1
+		rt:1/2;a:b3;s:1;r
+		a:b3;s:1;r;s:1
+		rt:6/4;a:g3;s:2;r
+		rt:6/4;a:f#3;s:2;r
+	]
+
+	[grp:11
+		a:a3;s:2;r;s:2
+		a:a3;s:1;r;s:1
+		rt:1/2;a:a3;s:1;r
+		rt:1/2;a:a3;s:1;r
+		s:1
+		rt:1/2;a:a3;s:1;r
+		rt:1/2;a:a3;s:1;r;s:1
+		a:a3;s:1;r;s:1
+		a:a3;s:1;r;s:1
+	]
+
+	[grp:12
+		a:a#3;s:2;r;s:2
+		a:a#3;s:1;r;s:1
+		rt:1/2;a:a#3;s:1;r
+		rt:6/4;a:a#3;s:2;r
+		a:a#3;s:1;s:2
+		a:f#3;s:2;r;s:2
+	]
+
+	[grp:15
+		g:10
+		g:10
+		g:11
+		g:12
+	]
+
+	i:lead
+	e:pr:60
+
+	s:64
+	s:64
+	v:192
+	pt:1200
+	d:pluck;g:0
+	d:pluck;g:1
+	pt:0
+	v:148
+	d:lead1;g:15
+	d:lead1;g:15
+	s:64
+	stt:30
+	s:64
+	stt:30
+
+	x
+
+]

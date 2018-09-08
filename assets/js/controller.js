@@ -1,7 +1,8 @@
-class BlipKitController {
+class BliplayController {
 	constructor(module) {
 		this.module = module;
 		this.currentEditor = null;
+		this.lock = false;
 
 		this.printErr = (line) => {
 			if (this.currentEditor) {
@@ -31,29 +32,56 @@ class BlipKitController {
 		return this._generate(length);
 	}
 
-	heapFloat32Array(array, offset, length) {
-		const memory = this.HEAPF32;
+	_heapSubarray(array, memory, offset, length) {
 		const offsetStart = array / memory.BYTES_PER_ELEMENT + offset;
 		const offsetEnd = offsetStart + length;
 
 		return memory.subarray(offsetStart, offsetEnd);
 	}
 
-	startContext() {
-		this._startContext();
+	heapInt8Array(array, offset, length) {
+		return this._heapSubarray(array, this.HEAP8, offset, length);
+	}
+
+	heapInt16Array(array, offset, length) {
+		return this._heapSubarray(array, this.HEAP16, offset, length);
+	}
+
+	heapInt32Array(array, offset, length) {
+		return this._heapSubarray(array, this.HEAP32, offset, length);
+	}
+
+	heapFloat32Array(array, offset, length) {
+		return this._heapSubarray(array, this.HEAPF32, offset, length);
+	}
+
+	setHeapInt8Array(array, data, offset) {
+		offset = offset || 0;
+		const memory = this.HEAP8;
+		const offsetStart = array / memory.BYTES_PER_ELEMENT + offset;
+		//const offsetEnd = offsetStart + length;
+
+		return memory.set(data, offsetStart);
+	}
+
+	startAudioContext() {
+		this._startAudioContext();
 		this.connectNode();
 		console.debug('Context start');
 	}
 
-	stopContext() {
-		this._stopContext();
-
-		// empty remaining audio buffers
-		setTimeout(() => {
-			this.disconnectNode();
-		}, 100);
-
+	stopAudioContext() {
 		console.debug('Context stop');
+
+		return new Promise((resolve, reject) => {
+			this._stopAudioContext();
+
+			// empty remaining audio buffers
+			setTimeout(() => {
+				this.disconnectNode();
+				resolve();
+			}, 100);
+		});
 	}
 
 	init() {
@@ -85,18 +113,65 @@ class BlipKitController {
 		};
 	}
 
-	runSource(editor, sourceCode) {
-		let result = this.ccall('compileSource', null, ['string'], [sourceCode]);
-
-		this.currentEditor = editor;
-
-		if (result === 0) {
-			this.startContext();
-		}
+	locateFile(file) {
+		return 'assets/' + file;
 	}
 
-	stop() {
-		this.stopContext();
+	_filePutContents(path, data) {
+		return this.ccall('writeFile', null, ['string', 'array', 'number'], [path, data, data.length]);
+	}
+
+	_loadSamples(paths) {
+		let fetches = paths.map((path) => {
+			console.log('Loading sample', path);
+
+			return fetch('assets/sound/' + path).then((result) => {
+				return result.arrayBuffer();
+			}).then((bytes) => {
+				const data = new Uint8Array(bytes);
+				const result = this._filePutContents(path, data);
+
+				if (result !== 0) {
+					throw 'Could not write file ' + path;
+				}
+			});
+		});
+
+		return Promise.all(fetches);
+	}
+
+	runSource(editor, sourceCode) {
+		if (this.lock) {
+			console.error('runSource has not ended yet');
+		}
+
+		this.lock = true;
+
+		this.stopAudio().then(() => {
+			let path;
+			let paths = [];
+			let result = this.ccall('compileSource', null, ['string'], [sourceCode]);
+
+			while ((path = this.ccall('nextSamplePath', null, [], []))) {
+				paths.push(this.UTF8ArrayToString(this.HEAP8, path));
+			}
+
+			this._loadSamples(paths).then(() => {
+				let result = this.ccall('createContext', null, [], []);
+
+				this.currentEditor = editor;
+
+				if (result === 0) {
+					this.startAudioContext();
+				}
+			}).finally(() => {
+				this.lock = false;
+			});
+		});
+	}
+
+	stopAudio() {
+		return this.stopAudioContext();
 	}
 
 	readyEvent() {
@@ -105,7 +180,7 @@ class BlipKitController {
 	}
 
 	doneEvent() {
-		this.stop();
+		this.stopAudio();
 	}
 
 	lineNumberEvent(trackIdx, lineNumber) {

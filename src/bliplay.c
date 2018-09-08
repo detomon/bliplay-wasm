@@ -23,6 +23,8 @@ static BKInt isRunning = 0;
 static BKInt isInitialized = 0;
 static BKInt wasCompiled = 0;
 
+static BKHashTableIterator sampleItor;
+
 EMSCRIPTEN_KEEPALIVE
 float const* getBuffer() {
 	return bufferFloat;
@@ -98,10 +100,27 @@ static BKInt putToken(BKTKToken const* token, BKTKParser* parser) {
 }
 
 EMSCRIPTEN_KEEPALIVE
+char const* nextSamplePath(void) {
+	char const* key;
+	BKTKSample* sample;
+
+	// return next sample name
+	while (BKHashTableIteratorNext (&sampleItor, &key, (void **) &sample)) {
+		if (sample->path.len) {
+			return sample->path.str;
+		}
+	}
+
+	return NULL;
+}
+
+EMSCRIPTEN_KEEPALIVE
 BKInt compileSource(char const* source) {
 	BKInt res = 0;
 	BKTKParserNode* nodeTree;
 	size_t const length = strlen(source);
+
+	wasCompiled = 0;
 
 	if (!isInitialized) {
 		fprintf(stderr, "initialize was not called\n");
@@ -156,17 +175,10 @@ BKInt compileSource(char const* source) {
 			}
 
 			if (res == 0) {
-				if ((res = BKTKContextCreate(&context, &compiler)) != 0) {
-					fprintf(stderr, "Creating context failed (%s)\n", BKStatusGetName(res));
-					fprintf(stderr, "%s\n", (char const*)context.error.str);
-				}
+				BKHashTableIteratorInit(&sampleItor, &compiler.samples);
 			}
 		}
 	}
-
-	BKDispose(&tokenizer);
-	BKDispose(&parser);
-	BKDispose(&compiler);
 
 	if (res == 0) {
 		wasCompiled = 1;
@@ -176,7 +188,29 @@ BKInt compileSource(char const* source) {
 }
 
 EMSCRIPTEN_KEEPALIVE
-int startContext(void) {
+BKInt createContext(void) {
+	BKInt res = 0;
+
+	if (!wasCompiled) {
+		fprintf(stderr, "compileSource\n");
+		return -1;
+	}
+
+	if ((res = BKTKContextCreate(&context, &compiler)) != 0) {
+		fprintf(stderr, "Creating context failed (%s)\n", BKStatusGetName(res));
+		fprintf(stderr, "%s\n", (char const*)context.error.str);
+	}
+
+	BKDispose(&tokenizer);
+	BKDispose(&parser);
+	BKDispose(&compiler);
+	memset(&sampleItor, 0, sizeof(sampleItor));
+
+	return 0;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int startAudioContext(void) {
 	BKInt res = 0;
 
 	if (!isInitialized) {
@@ -201,17 +235,33 @@ int startContext(void) {
 }
 
 static void emitDone(void) {
-	EM_ASM(BlipKit.emitEvent('done'));
+	EM_ASM(Bliplay.emitEvent('done'));
 }
 
 static void emitLineNumber(BKInt trackIdx, BKInt lineno) {
-	EM_ASM({BlipKit.emitEvent('lineNumber', $0, $1)}, trackIdx, lineno);
+	EM_ASM({Bliplay.emitEvent('lineNumber', $0, $1)}, trackIdx, lineno);
 }
 
 EMSCRIPTEN_KEEPALIVE
-int stopContext(void) {
+int stopAudioContext(void) {
 	BKTKContextDetach(&context);
 	isRunning = 0;
+}
+
+#include <errno.h>
+
+EMSCRIPTEN_KEEPALIVE
+int writeFile(char const* path, void const* data, size_t size) {
+	FILE* file = fopen(path, "wb+");
+
+	if (!file) {
+		return -1;
+	}
+
+	fwrite(data, sizeof(char), size, file);
+	fclose(file);
+
+	return 0;
 }
 
 static BKInt hasRunningTracks(BKTKContext const* ctx) {
@@ -263,7 +313,7 @@ static void loop(void) {
 
 EMSCRIPTEN_KEEPALIVE
 int main(int argc, char const* const argv[]) {
-	EM_ASM(BlipKit.emitEvent('ready'));
+	EM_ASM(Bliplay.emitEvent('ready'));
 
 	emscripten_set_main_loop(loop, 0, 0);
 

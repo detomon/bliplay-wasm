@@ -1,8 +1,9 @@
 CC = emcc
 
-NAME = blipkit
+NAME = bliplay
+SRC = src
 DIR = assets
-MODULE_NAME = BlipKit
+MODULE_NAME = Bliplay
 TARGET_MAIN = $(DIR)/$(NAME).js
 TARGETS_ALL = $(TARGET_MAIN) $(TARGET_MAIN:%.js=%.wasm)
 
@@ -10,13 +11,13 @@ BKSRC = bliplay/BlipKit/src
 BPSRC = bliplay/parser
 BUSRC = bliplay/utility
 
-SOURCES = $(DIR)/$(NAME).c
+SOURCES = $(SRC)/$(NAME).c
 SOURCES += $(wildcard $(BKSRC)/*.c)
 SOURCES += $(wildcard $(BPSRC)/*.c)
 SOURCES += $(wildcard $(BUSRC)/*.c)
 
 EXPORTS = ["_main"]
-RUNTIME_EXPORTS = ["ccall","cwrap"]
+RUNTIME_EXPORTS = ["ccall","cwrap","UTF8ArrayToString"]
 
 CFLAGS = -O2 -Wall -I./$(BKSRC) -I./$(BPSRC) -I./$(BUSRC)
 

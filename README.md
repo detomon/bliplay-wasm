@@ -45,7 +45,7 @@ BINARYEN_ROOT = os.path.expanduser(os.getenv('BINARYEN', '')) # if not set, we w
 
 ## Build
 
-Build `blipkit.js` and `blipkit.wasm`:
+Build `bliplay.js` and `bliplay.wasm`:
 
 ```sh
 $ make

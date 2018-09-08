@@ -10,7 +10,8 @@ Contains a WebAssembly version of [bliplay](https://github.com/detomon/bliplay).
 
 ## Demo
 
-[bliplay-wasm](https://detomon.github.io/bliplay-wasm/)
+- [Bliplay editor](https://detomon.github.io/bliplay-wasm/)
+- [Examples](https://detomon.github.io/bliplay-wasm/links.html) for URLs which directly contain the source code.
 
 ## Setup
 

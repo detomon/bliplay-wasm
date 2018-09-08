@@ -119,7 +119,7 @@ class BliplayController {
 	}
 
 	locateFile(file) {
-		return 'assets/' + file;
+		return 'assets/js/' + file;
 	}
 
 	_filePutContents(path, data) {

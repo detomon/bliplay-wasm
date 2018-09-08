@@ -29,8 +29,9 @@
 
 .CodeMirror .line-breakpoint {
 	width: 2em;
+	height: 1em;
 	position: relative;
-	background: rgba(255, 0, 0, 0.7);
+	background: rgba(255, 224, 0, 0.7);
 	color: transparent;
 }
 
@@ -42,7 +43,7 @@
 	right: -0.9em;
 	position: absolute;
 	border: solid 0.5em transparent;
-	border-left-color: rgba(255, 0, 0, 0.3);
+	border-left-color: rgba(255, 224, 0, 0.7);
 	content: '';
 	display: block;
 }

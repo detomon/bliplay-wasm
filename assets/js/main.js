@@ -11,8 +11,12 @@ document.querySelector('#start').addEventListener('click', function () {
 
 	textarea.sourceEditor.reset();
 
+	document.documentElement.classList.remove('loaded');
+
 	// TODO: wait for readyEvent
-	window.Bliplay.runSource(textarea.sourceEditor, source);
+	window.Bliplay.runSource(textarea.sourceEditor, source).finally(() => {
+		document.documentElement.classList.add('loaded');
+	});
 });
 
 document.querySelector('#stop').addEventListener('click', function () {

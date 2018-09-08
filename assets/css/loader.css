@@ -1,5 +1,5 @@
 :root {
-	--transition-time: 0.2s;
+	--transition-time: 0.1s;
 }
 
 .page-loader {
@@ -8,7 +8,7 @@
 	left: 0;
 	top: 0;
 	position: fixed;
-	background: var(--background-color);
+	background: rgba(48, 48, 48, 0.5);
 	z-index: 1000;
 	opacity: 0;
 	transition-timing-function: ease-out;

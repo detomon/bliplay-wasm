@@ -152,7 +152,7 @@ class BliplayController {
 
 		this.lock = true;
 
-		this.stopAudio().then(() => {
+		return this.stopAudio().then(() => {
 			let path;
 			let paths = [];
 			let result = this.ccall('compileSource', null, ['string'], [sourceCode]);

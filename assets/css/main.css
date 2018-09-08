@@ -1,6 +1,6 @@
 :root {
 	--text-color: #505050;
-	--input-text-color: #a0a0a0;
+	--input-text-color: #e0e0e0;
 	--background-color: white;
 }
 
@@ -65,12 +65,10 @@ input, select {
 }
 
 select {
-	color: var(--input-text-color);
 	margin: 0;
 	padding: 0.5rem 1rem;
 	border: 0;
 	border-radius: 0;
-	background: #303030;
 	appearance: none;
 	-webkit-appearance: none;
 }
@@ -97,4 +95,17 @@ select, button,
 input[type=button], input[type=submit], input[type=reset],
 .button {
 	cursor: pointer;
+	font: inherit;
+	background: #404040;
+	color: var(--input-text-color);
+	border-radius: 0.25em;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.button {
+	border: 0;
+	padding: 0.5em 1em;
+	margin: 0;
+	display: inline-block;
 }

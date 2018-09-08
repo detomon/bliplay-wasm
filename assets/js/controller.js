@@ -78,7 +78,12 @@ class BliplayController {
 
 			// empty remaining audio buffers
 			setTimeout(() => {
-				this.disconnectNode();
+				// prevent exception when node is not connected
+				try {
+					this.disconnectNode();
+				}
+				catch (e) {}
+
 				resolve();
 			}, 100);
 		});

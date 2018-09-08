@@ -25,11 +25,6 @@ static BKInt wasCompiled = 0;
 
 static BKHashTableIterator sampleItor;
 
-EMSCRIPTEN_KEEPALIVE
-float const* getBuffer() {
-	return bufferFloat;
-}
-
 static void deinterlaceInt16Float(int16_t const source[], float target[], size_t length, size_t size) {
 	for (size_t n = 0; n < size; n++) {
 		float* targetPtr = &target[n * length];
@@ -40,28 +35,66 @@ static void deinterlaceInt16Float(int16_t const source[], float target[], size_t
 	}
 }
 
-EMSCRIPTEN_KEEPALIVE
-BKInt generate(int length) {
-	BKInt result = BKContextGenerate(&ctx, buffer, length);
-
-	if (result > 0) {
-		deinterlaceInt16Float(buffer, bufferFloat, length, numChannels);
-	}
-	else {
-		memset(bufferFloat, 0, sizeof(*bufferFloat) * length * numChannels);
-	}
-
-	return result;
-}
-
-EMSCRIPTEN_KEEPALIVE
-BKTime getTime(void) {
-	return ctx.currentTime;
-}
-
-EMSCRIPTEN_KEEPALIVE
-BKInt initialize(BKInt numChannels, BKInt sampleRate) {
+static BKInt putToken(BKTKToken const* token, BKTKParser* parser) {
 	BKInt res;
+
+	if ((res = BKTKParserPutTokens(parser, token, 1)) != 0) {
+		return res;
+	}
+
+	return 0;
+}
+
+static void emitDone(void) {
+	EM_ASM(Bliplay.emitEvent('done'));
+}
+
+static void emitLineNumber(BKInt trackIdx, BKInt lineno) {
+	EM_ASM({Bliplay.emitEvent('lineNumber', $0, $1)}, trackIdx, lineno);
+}
+
+static BKInt hasRunningTracks(BKTKContext const* ctx) {
+	BKTKTrack const* track;
+	BKSize numActive = 0;
+
+	for (BKInt i = 0; i < ctx->tracks.len; i ++) {
+		track = *(BKTKTrack const* const*) BKArrayItemAt(&ctx->tracks, i);
+
+		if (track) {
+			numActive++;
+
+			// exit if tracks have stopped
+			if (track->interpreter.object.flags & BKTKInterpreterFlagHasStopped) {
+				numActive--;
+			}
+		}
+	}
+
+	return numActive > 0;
+}
+
+static void updateLineNumbers(BKTKContext const* ctx) {
+	BKTKTrack const* track;
+
+	for (BKInt i = 0; i < ctx->tracks.len; i ++) {
+		track = *(BKTKTrack const* const*) BKArrayItemAt(&ctx->tracks, i);
+
+		if (track) {
+			if (track->lineno != activeLineNumbers[i]) {
+				activeLineNumbers[i] = track->lineno;
+				lineNumbers[lineNumbersCount++] = track->lineno;
+				emitLineNumber(i, track->lineno);
+			}
+		}
+	}
+}
+
+EMSCRIPTEN_KEEPALIVE
+BKInt initialize(BKInt theNumChannels, BKInt theSampleRate) {
+	BKInt res;
+
+	numChannels = theNumChannels;
+	sampleRate = theSampleRate;
 
 	if (isInitialized) {
 		fprintf(stderr, "Already initialized\n");
@@ -89,12 +122,24 @@ BKInt initialize(BKInt numChannels, BKInt sampleRate) {
 	return res;
 }
 
-static BKInt putToken(BKTKToken const* token, BKTKParser* parser) {
-	BKInt res;
+EMSCRIPTEN_KEEPALIVE
+int stopAudioContext(void) {
+	BKTKContextDetach(&context);
+	isRunning = 0;
 
-	if ((res = BKTKParserPutTokens(parser, token, 1)) != 0) {
-		return res;
+	return 0;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int writeFile(char const* path, void const* data, size_t size) {
+	FILE* file = fopen(path, "wb+");
+
+	if (!file) {
+		return -1;
 	}
+
+	fwrite(data, sizeof(char), size, file);
+	fclose(file);
 
 	return 0;
 }
@@ -107,7 +152,7 @@ char const* nextSamplePath(void) {
 	// return next sample name
 	while (BKHashTableIteratorNext (&sampleItor, &key, (void **) &sample)) {
 		if (sample->path.len) {
-			return sample->path.str;
+			return (char const*) sample->path.str;
 		}
 	}
 
@@ -234,73 +279,18 @@ int startAudioContext(void) {
 	return res;
 }
 
-static void emitDone(void) {
-	EM_ASM(Bliplay.emitEvent('done'));
-}
-
-static void emitLineNumber(BKInt trackIdx, BKInt lineno) {
-	EM_ASM({Bliplay.emitEvent('lineNumber', $0, $1)}, trackIdx, lineno);
-}
 
 EMSCRIPTEN_KEEPALIVE
-int stopAudioContext(void) {
-	BKTKContextDetach(&context);
-	isRunning = 0;
-}
+BKInt generate(int length) {
+	BKInt res = BKContextGenerate(&ctx, buffer, length);
 
-#include <errno.h>
-
-EMSCRIPTEN_KEEPALIVE
-int writeFile(char const* path, void const* data, size_t size) {
-	FILE* file = fopen(path, "wb+");
-
-	if (!file) {
-		return -1;
+	if (res > 0) {
+		deinterlaceInt16Float(buffer, bufferFloat, length, numChannels);
+	}
+	else {
+		memset(bufferFloat, 0, sizeof(*bufferFloat) * length * numChannels);
 	}
 
-	fwrite(data, sizeof(char), size, file);
-	fclose(file);
-
-	return 0;
-}
-
-static BKInt hasRunningTracks(BKTKContext const* ctx) {
-	BKTKTrack const* track;
-	BKSize numActive = 0;
-
-	for (BKInt i = 0; i < ctx -> tracks.len; i ++) {
-		track = *(BKTKTrack const* const*) BKArrayItemAt(&ctx->tracks, i);
-
-		if (track) {
-			numActive++;
-
-			// exit if tracks have stopped
-			if (track->interpreter.object.flags & BKTKInterpreterFlagHasStopped) {
-				numActive--;
-			}
-		}
-	}
-
-	return numActive > 0;
-}
-
-static void updateLineNumbers(BKTKContext const* ctx) {
-	BKTKTrack const* track;
-
-	for (BKInt i = 0; i < ctx -> tracks.len; i ++) {
-		track = *(BKTKTrack const* const*) BKArrayItemAt(&ctx->tracks, i);
-
-		if (track) {
-			if (track->lineno != activeLineNumbers[i]) {
-				activeLineNumbers[i] = track->lineno;
-				lineNumbers[lineNumbersCount++] = track->lineno;
-				emitLineNumber(i, track->lineno);
-			}
-		}
-	}
-}
-
-static void loop(void) {
 	if (isRunning) {
 		updateLineNumbers(&context);
 
@@ -309,13 +299,26 @@ static void loop(void) {
 			emitDone();
 		}
 	}
+
+	return res;
+}
+
+EMSCRIPTEN_KEEPALIVE
+float const* getBuffer() {
+	return bufferFloat;
+}
+
+
+EMSCRIPTEN_KEEPALIVE
+BKTime getTime(void) {
+	return ctx.currentTime;
 }
 
 EMSCRIPTEN_KEEPALIVE
 int main(int argc, char const* const argv[]) {
 	EM_ASM(Bliplay.emitEvent('ready'));
 
-	emscripten_set_main_loop(loop, 0, 0);
+	emscripten_exit_with_live_runtime();
 
 	return 0;
 }

@@ -44,4 +44,5 @@ if (sourceRaw) {
 else {
 	fileSelect.selectedIndex = 1;
 	changeFile(fileSelect);
+	document.documentElement.classList.add('show-files');
 }

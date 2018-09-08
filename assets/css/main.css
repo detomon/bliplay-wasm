@@ -51,6 +51,11 @@ html, body {
 	position: relative;
 }
 
+html:not(.show-files) .editor-header,
+html:not(.show-files) #file-select {
+	display: none;
+}
+
 svg {
 	left: 0;
 	top: 0;

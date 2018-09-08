@@ -246,8 +246,8 @@ BKInt createContext(void) {
 		fprintf(stderr, "%s\n", (char const*)context.error.str);
 	}
 
-	BKDispose(&tokenizer);
 	BKDispose(&parser);
+	BKDispose(&tokenizer);
 	BKDispose(&compiler);
 	memset(&sampleItor, 0, sizeof(sampleItor));
 

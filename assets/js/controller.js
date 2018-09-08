@@ -51,15 +51,22 @@ class BliplayController {
 		return this._heapSubarray(array, this.HEAP32, offset, length);
 	}
 
+	heapInt64Array(array, offset, length) {
+		return this._heapSubarray(array, this.HEAP64, offset, length);
+	}
+
 	heapFloat32Array(array, offset, length) {
 		return this._heapSubarray(array, this.HEAPF32, offset, length);
+	}
+
+	heapFloat64Array(array, offset, length) {
+		return this._heapSubarray(array, this.HEAPF64, offset, length);
 	}
 
 	setHeapInt8Array(array, data, offset) {
 		offset = offset || 0;
 		const memory = this.HEAP8;
 		const offsetStart = array / memory.BYTES_PER_ELEMENT + offset;
-		//const offsetEnd = offsetStart + length;
 
 		return memory.set(data, offsetStart);
 	}
@@ -123,7 +130,14 @@ class BliplayController {
 	}
 
 	_filePutContents(path, data) {
-		return this.ccall('writeFile', null, ['string', 'array', 'number'], [path, data, data.length]);
+		let memory = this._malloc(data.length);
+
+		this.setHeapInt8Array(memory, data);
+		let result = this.ccall('writeFile', null, ['string', 'number', 'number'], [path, memory, data.length]);
+
+		this._free(memory);
+
+		return result;
 	}
 
 	_loadSamples(paths) {

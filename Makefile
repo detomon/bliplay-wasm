@@ -22,7 +22,7 @@ RUNTIME_EXPORTS = ["ccall","cwrap","UTF8ArrayToString"]
 CFLAGS = -O2 -Wall -I./$(BKSRC) -I./$(BPSRC) -I./$(BUSRC) -DBK_USE_64_BIT=0
 
 # Debug
-#CFLAGS = -O0 -g -Wall -I./$(BKSRC) -I./$(BPSRC) -I./$(BUSRC)
+#CFLAGS = -O0 -g -Wall -I./$(BKSRC) -I./$(BPSRC) -I./$(BUSRC) -DBK_USE_64_BIT=0
 
 OTHER_FLAGS = \
 	-s ASSERTIONS=2 \

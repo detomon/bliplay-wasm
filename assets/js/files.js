@@ -24,25 +24,14 @@ function setSource(source) {
 	editor.setValue(source);
 }
 
-function setTitle(title) {
-	let fileTitle = document.querySelector('#file-title');
-
-	fileTitle.textContent = title;
-}
-
 function changeFile(target) {
 	const option = target.options[target.selectedIndex];
 	const file = option.file;
-
-	target.disabled = true;
 
 	fetch(file.path).then((response) => {
 		return response.text();
 	}).then((source) => {
 		setSource(source);
-		setTitle(file.title);
-	}).then(() => {
-		target.disabled = false;
 	});
 }
 

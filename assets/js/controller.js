@@ -1,6 +1,6 @@
 class BliplayController {
-	constructor(module) {
-		this.module = module;
+	constructor(delegate) {
+		this.delegate = delegate || {};
 		this.currentEditor = null;
 		this.lock = false;
 
@@ -208,6 +208,10 @@ class BliplayController {
 		}
 		else {
 			console.warn('Unable to deliver event', eventName, args);
+		}
+
+		if (this.delegate && this.delegate[eventName]) {
+			this.delegate[eventName].apply(this.delegate, args);
 		}
 	}
 }

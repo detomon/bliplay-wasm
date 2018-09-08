@@ -25,7 +25,7 @@ html, body {
 }
 
 .controls-wrapper {
-	padding: 0 0.6667rem;
+	padding: 0 0.5rem;
 	flex: none;
 	display: flex;
 	flex-wrap: wrap;
@@ -34,7 +34,7 @@ html, body {
 }
 
 .controls-wrapper .control {
-	padding: 0.5rem 0.6667rem;
+	padding: 0.8rem 0.4rem;
 	display: flex;
 	flex: none;
 	flex-direction: row;
@@ -51,11 +51,11 @@ html, body {
 	position: relative;
 }
 
-html.show-files .hide-when-files {
+html.playing .hide-on-play {
 	display: none;
 }
 
-html:not(.show-files) .show-when-files {
+html:not(.playing) .show-on-play {
 	display: none;
 }
 
@@ -121,4 +121,12 @@ input[type=button], input[type=submit], input[type=reset],
 	padding: 0.5em 1em;
 	margin: 0;
 	display: inline-block;
+}
+
+.button-green {
+	background-color: #20a000;
+}
+
+.button-red {
+	background-color: #d04000;
 }

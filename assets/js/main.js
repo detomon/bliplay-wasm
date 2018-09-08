@@ -1,5 +1,3 @@
-window.Bliplay = new BliplayController();
-
 window.addEventListener('load', () => {
 	document.documentElement.classList.add('loaded');
 });
@@ -11,6 +9,7 @@ document.querySelector('#start').addEventListener('click', function () {
 
 	textarea.sourceEditor.reset();
 
+	document.documentElement.classList.add('playing');
 	document.documentElement.classList.remove('loaded');
 
 	// TODO: wait for readyEvent
@@ -20,6 +19,7 @@ document.querySelector('#start').addEventListener('click', function () {
 });
 
 document.querySelector('#stop').addEventListener('click', function () {
+	document.documentElement.classList.remove('playing');
 	window.Bliplay.stopAudio();
 });
 
@@ -43,6 +43,12 @@ document.querySelector('#source-link').addEventListener('click', function () {
 	window.prompt('This URL contains the current editor content:', source);
 });
 
+window.Bliplay = new BliplayController({
+	doneEvent: () => {
+		document.documentElement.classList.remove('playing');
+	},
+});
+
 const sourceRaw = /^#s=(.*)$/.exec(window.location.hash);
 
 if (sourceRaw) {
@@ -57,5 +63,4 @@ if (sourceRaw) {
 else {
 	fileSelect.selectedIndex = 1;
 	changeFile(fileSelect);
-	document.documentElement.classList.add('show-files');
 }

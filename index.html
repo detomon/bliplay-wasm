@@ -15,26 +15,23 @@
 <body>
 
 <div class="wrapper">
-	<header class="editor-header controls-wrapper show-when-files">
-		<div class="control" id="file-title">Title</div>
-	</header>
 	<div class="source-wrapper">
 		<textarea class="code-editor" id="source"></textarea>
 	</div>
 	<footer class="controls-wrapper">
-		<div class="control">
-			<button class="button" id="start">Play</button>
+		<div class="control hide-on-play">
+			<button class="button button-green" id="start">Play</button>
+		</div>
+		<div class="control show-on-play">
+			<button class="button button-red" id="stop">Stop</button>
 		</div>
 		<div class="control">
-			<button class="button" id="stop">Stop</button>
-		</div>
-		<div class="control show-when-files">
 			<select id="file-select">
-				<option disabled>Choose file…</option>
+				<option disabled>Choose example…</option>
 			</select>
 		</div>
-		<div class="control hide-when-files">
-			<button class="button" id="source-link">Link to editor content</button>
+		<div class="control">
+			<button class="button" id="source-link">Share Content</button>
 		</div>
 	</footer>
 </div>

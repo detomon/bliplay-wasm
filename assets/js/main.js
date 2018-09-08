@@ -30,6 +30,19 @@ function uintToString(uintArray) {
 	return decodedString;
 }
 
+document.querySelector('#source-link').addEventListener('click', function () {
+	let textarea = document.querySelector('.code-editor');
+	let editor = textarea.editorInstance;
+	let source = editor.getValue();
+
+	source = pako.deflate(source);
+	source = String.fromCharCode.apply(null, source);
+	source = btoa(source);
+	source = location.protocol + '//' + location.host + location.pathname + '#s=' + source;
+
+	window.prompt('This URL contains the current editor content:', source);
+});
+
 const sourceRaw = /^#s=(.*)$/.exec(window.location.hash);
 
 if (sourceRaw) {

@@ -15,7 +15,7 @@
 <body>
 
 <div class="wrapper">
-	<header class="editor-header controls-wrapper">
+	<header class="editor-header controls-wrapper show-when-files">
 		<div class="control" id="file-title">Title</div>
 	</header>
 	<div class="source-wrapper">
@@ -28,10 +28,13 @@
 		<div class="control">
 			<button class="button" id="stop">Stop</button>
 		</div>
-		<div class="control">
+		<div class="control show-when-files">
 			<select id="file-select">
 				<option disabled>Choose file…</option>
 			</select>
+		</div>
+		<div class="control hide-when-files">
+			<button class="button" id="source-link">Link to editor content</button>
 		</div>
 	</footer>
 </div>
@@ -44,7 +47,7 @@
 <script src="codemirror/addon/fold/brace-fold.js"></script>
 <script src="codemirror/addon/fold/foldgutter.js"></script>
 <script src="codemirror/mode/blip/blip.js"></script>
-<script src="assets/js/vendor/pako_inflate.min.js"></script>
+<script src="assets/js/vendor/pako.min.js"></script>
 <script src="assets/js/controller.js"></script>
 <script src="assets/js/source-editor.js"></script>
 <script src="assets/js/player.js"></script>

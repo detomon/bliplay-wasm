@@ -51,9 +51,16 @@ html, body {
 	position: relative;
 }
 
-html:not(.show-files) .editor-header,
-html:not(.show-files) #file-select {
+html.show-files .hide-when-files {
 	display: none;
+}
+
+html:not(.show-files) .show-when-files {
+	display: none;
+}
+
+a {
+	color: inherit;
 }
 
 svg {
@@ -106,6 +113,7 @@ input[type=button], input[type=submit], input[type=reset],
 	border-radius: 0.25em;
 	-webkit-appearance: none;
 	appearance: none;
+	text-decoration: none;
 }
 
 .button {

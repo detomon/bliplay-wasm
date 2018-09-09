@@ -1,62 +1,25 @@
-# bliplay WebAssembly
+# bliplay WebAssembly Version
 
-Contains a WebAssembly version of [bliplay](https://github.com/detomon/bliplay).
+This is a version of [bliplay](https://github.com/detomon/bliplay) compiled for WebAssembly. It uses the browser's `AudioContext` API to output sound.
 
-> ---
->
-> WORK IN PROGRESS
->
-> ---
+## Interactive Editor
 
-## Demo
+The [interactive code editor](https://detomon.github.io/bliplay-wasm/) allows to write `.blip` code. It dynamically compiles the code and outputs the sound. It should run in all major browsers.
 
-- [Bliplay editor](https://detomon.github.io/bliplay-wasm/)
-- [Examples](https://detomon.github.io/bliplay-wasm/links.html) for URLs which directly contain the source code.
+![bliplay editor](assets/img/editor.gif)
 
-## Setup
+## Shareble URLs
 
-Checkout the submodules:
+The editor supports shareable URLs, which contain a compressed version of the editor code in the URL fragment. [This page](https://detomon.github.io/bliplay-wasm/links.html) contains some examples.
 
-```sh
-git submodule update --init --recursive
-```
-
-Install emscripten:
-
-```sh
-$ brew install emscripten
-```
-
-Run the compiler command once to create the config file in `~/.emscripten`:
-
-```sh
-$ emcc
-```
-
-Edit `~/.emscripten` and make sure `LLVM_ROOT` points to the LLVM binaries inside the emscripten directory `/usr/local/Cellar/emscripten/1.37.25/libexec/llvm/bin` (version may change):
+The format looks like this:
 
 ```
-...
-# this helps projects using emscripten find it
-EMSCRIPTEN_ROOT = os.path.expanduser(os.getenv('EMSCRIPTEN', '/usr/local/Cellar/emscripten/1.37.25/libexec')) # directory
-LLVM_ROOT = '/usr/local/Cellar/emscripten/1.38.11/libexec/llvm/bin'
-BINARYEN_ROOT = os.path.expanduser(os.getenv('BINARYEN', '')) # if not set, we will use it from ports
-...
+https://detomon.github.io/bliplay-wasm/#s=<data>
 ```
 
-## Build
+Where `<data>` is a Base64 encoded and gzip compressed (deflated) string:
 
-Build `bliplay.js` and `bliplay.wasm`:
-
-```sh
-$ make
 ```
-
-## Running
-
-You can now run `index.html` on a local webserver. Opening it directly from the file system may not work.
-
-## Some Articles
-
-<https://medium.com/@eliamaino/calling-c-functions-from-javascript-with-emscripten-first-part-e99fb6eedb22>
-<https://stackoverflow.com/questions/41875728/pass-a-javascript-array-as-argument-to-a-webassembly-function>
+data = base64_encode(gzcompress("a:c4;s:4;...")).
+```

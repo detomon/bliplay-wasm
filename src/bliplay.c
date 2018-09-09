@@ -282,14 +282,14 @@ int startAudioContext(void) {
 
 EMSCRIPTEN_KEEPALIVE
 BKInt generate(int length) {
-	BKInt res = BKContextGenerate(&ctx, buffer, length);
+	BKInt size = BKContextGenerate(&ctx, buffer, length);
 
-	if (res > 0) {
-		deinterlaceInt16Float(buffer, bufferFloat, length, numChannels);
+	// fill remaining buffer if context was terminated
+	if (size < length) {
+		memset(&buffer[size * numChannels], 0, sizeof(*buffer) * (length - size) * numChannels);
 	}
-	else {
-		memset(bufferFloat, 0, sizeof(*bufferFloat) * length * numChannels);
-	}
+
+	deinterlaceInt16Float(buffer, bufferFloat, length, numChannels);
 
 	if (isRunning) {
 		updateLineNumbers(&context);
@@ -300,7 +300,7 @@ BKInt generate(int length) {
 		}
 	}
 
-	return res;
+	return size;
 }
 
 EMSCRIPTEN_KEEPALIVE

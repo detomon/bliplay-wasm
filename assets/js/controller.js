@@ -96,20 +96,10 @@ class BliplayController {
 		});
 	}
 
-	init() {
-		const numFrames = 2048;
-		const numChannels = 2;
+	_createGeneratorNode(numFrames, numChannels) {
+		let generatorNode = this.context.createScriptProcessor(numFrames, numChannels, numChannels);
 
-		this.context = new (window.AudioContext || window.webkitAudioContext)();
-		this.source = this.context.createBufferSource();
-		this.generatorNode = this.context.createScriptProcessor(numFrames, numChannels, numChannels);
-
-		if (this._initialize(numChannels, this.context.sampleRate) !== 0) {
-			console.error('Unable to initialize context');
-			return;
-		}
-
-		this.generatorNode.onaudioprocess = (audioProcessingEvent) => {
+		generatorNode.onaudioprocess = (audioProcessingEvent) => {
 			const audioBuffer = this._getBuffer();
 			const inputBuffer = audioProcessingEvent.inputBuffer;
 			const outputBuffer = audioProcessingEvent.outputBuffer;
@@ -123,6 +113,22 @@ class BliplayController {
 				outputData.set(channelData);
 			}
 		};
+
+		return generatorNode;
+	}
+
+	init() {
+		const numFrames = 2048;
+		const numChannels = 2;
+
+		this.context = new (window.AudioContext || window.webkitAudioContext)();
+		this.source = this.context.createBufferSource();
+		this.generatorNode = this._createGeneratorNode(numFrames, numChannels);
+
+		if (this._initialize(numChannels, this.context.sampleRate) !== 0) {
+			console.error('Unable to initialize context');
+			return;
+		}
 	}
 
 	locateFile(file) {

@@ -138,13 +138,20 @@ class BliplayController {
 			console.debug('Loading sample', path);
 
 			return fetch('assets/sound/' + path).then((result) => {
+				if (result.status !== 200) {
+					return null;
+				}
+
 				return result.arrayBuffer();
 			}).then((bytes) => {
-				const data = new Uint8Array(bytes);
-				const result = this._filePutContents(path, data);
+				// ignore invalid samples
+				if (bytes) {
+					const data = new Uint8Array(bytes);
+					const result = this._filePutContents(path, data);
 
-				if (result !== 0) {
-					throw 'Could not write file ' + path;
+					if (result !== 0) {
+						throw "Could not write file '" + path + "'";
+					}
 				}
 			});
 		});
@@ -158,6 +165,7 @@ class BliplayController {
 		}
 
 		this.lock = true;
+		this.currentEditor = editor;
 
 		return this.stopAudio().then(() => {
 			let path;
@@ -171,11 +179,11 @@ class BliplayController {
 			this._loadSamples(paths).then(() => {
 				let result = this.ccall('createContext', null, [], []);
 
-				this.currentEditor = editor;
-
 				if (result === 0) {
 					this.startAudioContext();
 				}
+			}).catch((error) => {
+				this.printErr(error);
 			}).finally(() => {
 				this.lock = false;
 			});

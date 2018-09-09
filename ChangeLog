@@ -1,3 +1,10 @@
+Changes in bliplay-wasm 0.2.0:
+  Release date: 2018-09-09
+
+* Update bliplay
+* Update editor
+* Add shareable URLs
+
 bliplay-wasm 0.1.0:
   Release date: 2018-09-07
 

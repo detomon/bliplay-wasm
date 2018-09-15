@@ -18,13 +18,13 @@ class BliplayController {
 	}
 
 	connectNode() {
-		this.source.connect(this.generatorNode);
+		//this.source.connect(this.generatorNode);
 		this.generatorNode.connect(this.context.destination);
 		this.context.resume();
 	}
 
 	disconnectNode() {
-		this.source.disconnect(this.generatorNode);
+		//this.source.disconnect(this.generatorNode);
 		this.generatorNode.disconnect(this.context.destination);
 	}
 
@@ -122,7 +122,7 @@ class BliplayController {
 		const numChannels = 2;
 
 		this.context = new (window.AudioContext || window.webkitAudioContext)();
-		this.source = this.context.createBufferSource();
+		//this.source = this.context.createBufferSource();
 		this.generatorNode = this._createGeneratorNode(numFrames, numChannels);
 
 		if (this._initialize(numChannels, this.context.sampleRate) !== 0) {

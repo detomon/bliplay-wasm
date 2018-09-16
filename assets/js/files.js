@@ -1,8 +1,23 @@
 const fileSelect = document.querySelector('#file-select');
 
 const files = [{
+	title: 'Tutorial',
+	path: '---',
+}, {
 	title: 'Power On',
-	path: 'files/power-on.blip',
+	path: 'files/tutorial/power-on.blip',
+}, {
+	title: 'Waveforms',
+	path: 'files/tutorial/waveforms.blip',
+}, {
+	title: 'Instruments',
+	path: 'files/tutorial/instruments.blip',
+}, {
+	title: 'Samples',
+	path: 'files/tutorial/samples.blip',
+}, {
+	title: 'Tracks',
+	path: '---',
 }, {
 	title: 'Don\'t Eat Flashcards',
 	path: 'files/dont-eat-flashcards.blip',
@@ -35,6 +50,7 @@ const files = [{
 files.forEach((file) => {
 	let option = new Option(file.title, file.path);
 	option.file = file;
+	option.disabled = (file.path === '---');
 	fileSelect.appendChild(option);
 });
 

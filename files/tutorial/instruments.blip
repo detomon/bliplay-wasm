@@ -1,0 +1,40 @@
+% ------------------------------------------------------------------------------
+% INSTRUMENTS
+% ------------------------------------------------------------------------------
+
+% Set speed.
+st:20
+
+% Set waveform.
+w:square
+
+% Set volume to 75%.
+v:192
+
+% Define instrument 'arpeggio'.
+[instr:arpeggio
+	% Define volume envelope.
+	%
+	% Repeat the first value '255' as long as the not is set, then set the
+	% volume to the following values.
+	v:<:255:>:192:178:127:64:32:16:0
+
+	% Define arpeggio envelope.
+	%
+	% Play the note one octave higher for the first 8 ticks (4 ticks * 2) then
+	% repeat the chord 0:500:-500 as long as the not is set. Finally use the
+	% following values.
+	a:1200:1200:<:0:500:-500:>:0:-1200:0:-1200:0:-1200
+]
+
+% Set instrument 'arpeggio'.
+i:arpeggio
+
+% Play some notes.
+a:c4;s:4;r;s:4
+a:c3;s:4;r;s:4
+a:a#3;s:4;r;s:4
+a:g3;s:4;r;s:4
+
+% Disable instrument by passing no argument.
+i

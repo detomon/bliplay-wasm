@@ -1,0 +1,210 @@
+st:30 % 120 BPM
+
+[instr:default
+	adsr:0:0:255:48
+]
+
+[samp:drum1
+	load:wav:"drum1.wav"
+]
+
+[samp:drum2
+	load:wav:"drum2.wav"
+]
+
+[samp:snare1
+	load:wav:"snare1.wav"
+]
+
+[samp:hat1
+	load:wav:"hat1.wav"
+]
+
+[samp:hat2
+	load:wav:"hat2.wav"
+]
+
+[samp:hat3
+	load:wav:"hat3.wav"
+]
+
+[samp:hat4
+	load:wav:"hat4.wav"
+]
+
+[samp:hat5
+	load:wav:"hat5.wav"
+]
+
+[samp:bass
+	load:wav:"bass.wav"
+]
+
+% Percussion 1
+[track:sample
+	[grp:0
+		d:drum1;a:c4;s:2;r
+		d:hat3;a:c4;s:2;r
+		d:snare1;a:c4;s:2;r
+		d:hat3;a:c4;s:1;r
+		d:drum1;a:c4;s:2;r
+		d:hat3;a:c4;s:2;r
+		d:hat3;a:c4;s:1;r
+		d:snare1;a:c4;s:2;r
+		d:hat3;a:c4;s:2;r
+	]
+
+	[grp:1
+		d:drum1;a:c4;s:2;r
+		d:hat3;a:c4;s:2;r
+		d:snare1;a:c4;s:2;r
+		d:hat3;a:c4;s:1;r
+		d:drum1;a:c4;s:2;r
+		d:hat3;a:c4;s:1;r
+		d:hat3;a:c4;s:1;r
+		d:hat3;a:c4;s:1;r
+		d:snare1;a:c4;s:2;r
+		d:hat3;a:c4;s:2;r
+	]
+
+	[grp:2
+		d:drum1;a:c4;s:2;r
+		d:hat3;a:c4;s:2;r
+		d:snare1;a:c4;s:2;r
+		d:hat3;a:c4;s:1;r
+		d:drum1;a:c4;s:2;r
+		d:hat3;a:c4;s:2;r
+		d:hat3;a:c4;s:1;r
+		d:snare1;a:c4;s:4;r
+	]
+
+	[grp:5
+		g:0
+		g:0
+		g:1
+		g:2
+	]
+
+	[grp:6
+		g:0
+		g:0
+		g:1
+		s:16
+	]
+
+    s:64
+ 	g:5
+	g:5
+	g:6
+
+	x
+]
+
+% Percussion 2
+[track:sample
+	[grp:0
+		d:hat1;a:c4;s:2;r
+		d:hat5;a:c4;s:2;r
+		d:hat2;a:c4;s:2;r
+		d:hat4;a:c4;s:2;r
+		d:hat1;a:c4;s:1;r
+		d:drum2;a:c4;s:1;r
+		d:hat5;a:c4;s:1;r
+		d:hat4;a:c4;s:1;r
+		d:hat2;a:c4;s:2;r
+		d:drum2;a:c4;s:2;r
+	]
+
+	[grp:1
+		d:hat1;a:c4;s:2;r
+		d:hat5;a:c4;s:2;r
+		d:hat2;a:c4;s:2;r
+		d:hat4;a:c4;s:1;r
+		d:hat1;a:c4;s:2;r
+		d:drum2;a:c4;s:1;r
+		d:hat5;a:c4;s:1;r
+		d:hat4;a:c4;s:1;r
+		d:hat2;a:c4;s:2;r
+		d:drum2;a:c4;s:2;r
+	]
+
+	[grp:5
+		g:0
+		g:1
+		g:0
+		g:1
+	]
+
+	[grp:6
+		g:0
+		g:1
+		g:0
+		g:1
+	]
+
+	g:6
+	g:5
+	g:5
+	g:6
+
+	x
+]
+
+% Bass
+[track:sample
+	[grp:0
+		a:b3;s:3;r;s:1
+		rt:6/8;a:b3;s:2;r
+		a:g4;s:1;r
+		rt:6/8;a:f#3;s:2;r % +1
+
+		a:g4;s:1;r
+		a:f#3;s:2;r
+		a:g4;s:2;r
+		rt:6/8;a:g3;s:2;r
+
+		a:b3;s:3;r;s:1
+		rt:6/8;a:b3;s:2;r
+		a:g4;s:1;r
+		rt:6/8;a:f#3;s:2;r % +1
+
+		a:g4;s:1;r
+		a:f#3;s:2;r
+		a:g4;s:1;r
+		a:c#4;s:1;r
+		rt:6/8;a:d4;s:2;r
+
+		a:a3;s:3;r;s:1
+		rt:6/8;a:a3;s:2;r
+		a:e4;s:1;r
+		rt:6/8;a:f#3;s:2;r % +1
+
+		a:e4;s:1;r
+		a:f#3;s:2;r
+		a:e4;s:2;r
+		rt:6/8;a:g3;s:2;r
+
+		a:a#3;s:3;r;s:1
+		rt:6/8;a:a#3;s:2;r
+		a:g4;s:1;r
+		rt:6/8;a:g3;s:2;r % +1
+
+		a:g4;s:1;r
+		a:g3;s:2;r
+		a:g4;s:1;r
+		a:c#4;s:1
+		rt:6/8;a:d4;s:2;r
+	]
+
+	d:bass
+	i:default
+	v:212
+	e:pr:36
+
+	g:0
+	g:0
+	g:0
+	s:64
+
+	x
+]

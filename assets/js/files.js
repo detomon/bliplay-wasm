@@ -20,6 +20,9 @@ const files = [{
 	files: [{
 		title: 'Loop #1',
 		path: 'files/loops/loop-1.blip',
+	}, {
+		title: 'Loop #2',
+		path: 'files/loops/loop-2.blip',
 	}],
 }, {
 	title: 'Tracks',

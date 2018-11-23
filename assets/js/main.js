@@ -1,8 +1,4 @@
-window.addEventListener('load', () => {
-	document.documentElement.classList.add('loaded');
-});
-
-document.querySelector('#start').addEventListener('click', function () {
+function playAction() {
 	let textarea = document.querySelector('.code-editor');
 	let editor = textarea.editorInstance;
 	let source = editor.getValue();
@@ -16,11 +12,23 @@ document.querySelector('#start').addEventListener('click', function () {
 	window.Bliplay.runSource(textarea.sourceEditor, source).finally(() => {
 		document.documentElement.classList.add('loaded');
 	});
+}
+
+function stopAction() {
+	document.documentElement.classList.remove('playing');
+	window.Bliplay.stopAudio();
+}
+
+window.addEventListener('load', () => {
+	document.documentElement.classList.add('loaded');
+});
+
+document.querySelector('#start').addEventListener('click', function () {
+	playAction();
 });
 
 document.querySelector('#stop').addEventListener('click', function () {
-	document.documentElement.classList.remove('playing');
-	window.Bliplay.stopAudio();
+	stopAction();
 });
 
 function uintToString(uintArray) {

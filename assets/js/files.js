@@ -91,4 +91,5 @@ function changeFile(target) {
 
 fileSelect.addEventListener('change', (e) => {
 	changeFile(fileSelect);
+	window.stopAction();
 });

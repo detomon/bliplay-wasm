@@ -64,12 +64,18 @@ function setSource(source) {
 function changeFile(target) {
 	const option = target.options[target.selectedIndex];
 	const file = option.file;
+	const data = option.data;
 
-	fetch(file.path).then((response) => {
-		return response.text();
-	}).then((source) => {
-		setSource(source);
-	});
+	if (file) {
+		fetch(file.path).then((response) => {
+			return response.text();
+		}).then((source) => {
+			setSource(source);
+		});
+	}
+	else if (data) {
+		setSource(data);
+	}
 }
 
 fileSelect.addEventListener('change', (e) => {

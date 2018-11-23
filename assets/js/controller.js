@@ -182,6 +182,9 @@ class BliplayController {
 				paths.push(this.UTF8ArrayToString(this.HEAP8, path));
 			}
 
+			// pre-connect node to ensure audio playback permissions
+			this.connectNode();
+
 			this._loadSamples(paths).then(() => {
 				let result = this.ccall('createContext', null, [], []);
 

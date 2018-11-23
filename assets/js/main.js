@@ -70,6 +70,10 @@ if (sourceRaw) {
 
 	if (source) {
 		setSource(source);
+		addURLDataOptions(fileSelect, source);
+	}
+	else {
+		window.alert('Failed to decode URL data');
 	}
 }
 else {

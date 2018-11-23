@@ -50,13 +50,13 @@ window.Bliplay = new BliplayController({
 });
 
 function addURLDataOptions(fileSelect, source) {
-	let seperator = new Option('Other', '');
-	seperator.disabled = true;
-	fileSelect.appendChild(seperator);
+	let optGroup = document.createElement('optgroup');
+	optGroup.label = 'Other';
+	fileSelect.appendChild(optGroup);
 
 	let option = new Option('URL Data', '');
 	option.data = source;
-	fileSelect.appendChild(option);
+	optGroup.appendChild(option);
 
 	fileSelect.selectedIndex = fileSelect.options.length - 1;
 }
@@ -77,6 +77,6 @@ if (sourceRaw) {
 	}
 }
 else {
-	fileSelect.selectedIndex = 1;
+	fileSelect.selectedIndex = 0;
 	changeFile(fileSelect);
 }

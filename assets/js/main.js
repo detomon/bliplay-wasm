@@ -129,7 +129,7 @@ function parseURLData() {
 }
 
 if (!parseURLData()) {
-	fileSelect.selectedIndex = 0;
+	app.fileSelect.selectedIndex = 0;
 	app.changeFile();
 }
 

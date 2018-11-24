@@ -1,98 +1,112 @@
-const fileSelect = document.querySelector('#file-select');
-
 const files = [{
 	title: 'Tutorial',
+	subdir: 'tutorial/',
 	files: [{
 		title: 'Power On',
-		path: 'files/tutorial/power-on.blip',
+		path: 'power-on.blip',
 	}, {
 		title: 'Waveforms',
-		path: 'files/tutorial/waveforms.blip',
+		path: 'waveforms.blip',
 	}, {
 		title: 'Instruments',
-		path: 'files/tutorial/instruments.blip',
+		path: 'instruments.blip',
 	}, {
 		title: 'Samples',
-		path: 'files/tutorial/samples.blip',
+		path: 'samples.blip',
 	}],
 }, {
 	title: 'Loops',
+	subdir: 'loops/',
 	files: [{
 		title: 'Loop #1',
-		path: 'files/loops/loop-1.blip',
+		path: 'loop-1.blip',
 	}, {
 		title: 'Loop #2',
-		path: 'files/loops/loop-2.blip',
+		path: 'loop-2.blip',
 	}],
 }, {
 	title: 'Tracks',
 	files: [{
 		title: 'Don\'t Eat Flashcards',
-		path: 'files/dont-eat-flashcards.blip',
+		path: 'dont-eat-flashcards.blip',
 	}, {
 		title: 'Short-Fused Bombs',
-		path: 'files/short-fused-bombs.blip',
+		path: 'short-fused-bombs.blip',
 	}, {
 		title: 'Ghost Bouncer',
-		path: 'files/ghost-bouncer.blip',
+		path: 'ghost-bouncer.blip',
 	}, {
 		title: 'Hyperion Star Racer',
-		path: 'files/hyperion-star-racer.blip',
+		path: 'hyperion-star-racer.blip',
 	}, {
 		title: 'Killer Squid',
-		path: 'files/killer-squid.blip',
+		path: 'killer-squid.blip',
 	}, {
 		title: 'WYSIWYG',
-		path: 'files/wysiwyg.blip',
+		path: 'wysiwyg.blip',
 	}, {
 		title: 'Cave XII',
-		path: 'files/cave-xii.blip',
+		path: 'cave-xii.blip',
 	}, {
 		title: 'Monster Carousel',
-		path: 'files/monster-carousel.blip',
+		path: 'monster-carousel.blip',
 	}, {
 		title: 'Dirt Planet',
-		path: 'files/dirt-planet.blip',
+		path: 'dirt-planet.blip',
 	}],
 }];
 
-files.forEach((group) => {
-	let optGroup = document.createElement('optgroup');
-	optGroup.label = group.title;
-	fileSelect.appendChild(optGroup);
+app.addInit(function () {
 
-	group.files.forEach((file) => {
-		let option = new Option(file.title, file.path);
-		option.file = file;
-		optGroup.appendChild(option);
+function initFileSelect(select) {
+	select.addEventListener('change', (e) => {
+		app.changeFile();
+		app.stopAction();
 	});
-});
 
-function setSource(source) {
-	let textarea = document.querySelector('.code-editor');
-	let editor = textarea.editorInstance;
+	files.forEach((group) => {
+		const subdir = group.subdir || '';
+		const optGroup = document.createElement('optgroup');
 
-	editor.setValue(source);
+		optGroup.label = group.title;
+		select.appendChild(optGroup);
+
+		group.files.forEach((file) => {
+			const path = app.dirs.files + subdir + file.path;
+			const option = new Option(file.title, path);
+
+			option.file = file;
+			optGroup.appendChild(option);
+		});
+	});
 }
 
-function changeFile(target) {
-	const option = target.options[target.selectedIndex];
-	const file = option.file;
-	const data = option.data;
+app.fileSelect = document.querySelector('#file-select');
 
-	if (file) {
-		fetch(file.path).then((response) => {
+initFileSelect(app.fileSelect);
+
+function selectedOption(select) {
+	return select.options[select.selectedIndex];
+}
+
+app.changeFile = function () {
+	const option = selectedOption(app.fileSelect);
+	const path = option.value;
+	const data = option.data;
+	let dataPromise;
+
+	if (path) {
+		dataPromise = fetch(path).then((response) => {
 			return response.text();
-		}).then((source) => {
-			setSource(source);
 		});
 	}
 	else if (data) {
-		setSource(data);
+		dataPromise = Promise.resolve(data);
 	}
+
+	dataPromise.then((source) => {
+		app.setSource(source);
+	});
 }
 
-fileSelect.addEventListener('change', (e) => {
-	changeFile(fileSelect);
-	window.stopAction();
 });

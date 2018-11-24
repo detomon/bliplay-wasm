@@ -1,10 +1,7 @@
-const assetsDir = 'assets/';
-const scriptsDir = assetsDir + 'js/';
-const soundsDir = assetsDir + 'sound/';
-
 class BliplayController {
-	constructor(delegate) {
+	constructor(delegate, config) {
 		this.delegate = delegate || {};
+		this.config = config || {};
 		this.currentEditor = null;
 		this.lock = false;
 
@@ -136,7 +133,7 @@ class BliplayController {
 	}
 
 	locateFile(file) {
-		return scriptsDir + file;
+		return this.config.paths.scripts + file;
 	}
 
 	_filePutContents(path, data) {
@@ -147,7 +144,7 @@ class BliplayController {
 		let fetches = paths.map((path) => {
 			console.debug('Loading sample', path);
 
-			return fetch(soundsDir + path).then((result) => {
+			return fetch(this.config.paths.sounds + path).then((result) => {
 				if (result.status !== 200) {
 					return null;
 				}

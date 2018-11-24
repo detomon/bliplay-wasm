@@ -1,3 +1,5 @@
+app.addInit(function () {
+
 const editors = document.querySelectorAll('.code-editor');
 
 [].forEach.call(editors, (editor) => {
@@ -12,4 +14,6 @@ const editors = document.querySelectorAll('.code-editor');
 		theme: 'base16-ocean-dark',
 		gutters: ['note-gutter', 'breakpoints', 'CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
 	});
+});
+
 });

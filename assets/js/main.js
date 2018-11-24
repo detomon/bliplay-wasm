@@ -1,12 +1,34 @@
-function playAction() {
-	let textarea = document.querySelector('.code-editor');
-	let editor = textarea.editorInstance;
-	let source = editor.getValue();
+window.Bliplay = new BliplayController({
+	doneEvent: () => {
+		document.documentElement.classList.remove('playing');
+	},
+}, {
+	paths: app.dirs,
+});
+
+app.addInit(function (app) {
+
+const textarea = document.querySelector('.code-editor');
+const editor = textarea.editorInstance;
+
+app.editorInstance = editor;
+app.sourceEditor = textarea.sourceEditor;
+
+app.setSource = (source) => {
+	app.sourceEditor.reset();
+	app.editorInstance.setValue(source);
+}
+
+app.playAction = () => {
+	const textarea = document.querySelector('.code-editor');
+	const editor = textarea.editorInstance;
+	const source = editor.getValue();
 
 	textarea.sourceEditor.reset();
 
 	document.documentElement.classList.add('playing');
 	document.documentElement.classList.remove('loaded');
+
 
 	// TODO: wait for readyEvent
 	window.Bliplay.runSource(textarea.sourceEditor, source).finally(() => {
@@ -14,48 +36,56 @@ function playAction() {
 	});
 }
 
-function stopAction() {
+app.stopAction = () => {
 	document.documentElement.classList.remove('playing');
 	window.Bliplay.stopAudio();
 }
 
-window.addEventListener('load', () => {
-	document.documentElement.classList.add('loaded');
+app.editorSource = () => {
+	return app.sourceEditor.getValue();
+};
+
+document.querySelector('#start').addEventListener('click', () => {
+	app.playAction();
 });
 
-document.querySelector('#start').addEventListener('click', function () {
-	playAction();
-});
-
-document.querySelector('#stop').addEventListener('click', function () {
-	stopAction();
+document.querySelector('#stop').addEventListener('click', () => {
+	app.stopAction();
 });
 
 function uintToString(uintArray) {
-	let encodedString = String.fromCharCode.apply(null, uintArray);
-	let decodedString = decodeURIComponent(escape(encodedString));
+	const encodedString = String.fromCharCode.apply(null, uintArray);
+	const decodedString = decodeURIComponent(escape(encodedString));
 
 	return decodedString;
 }
 
-document.querySelector('#source-link').addEventListener('click', function () {
-	let textarea = document.querySelector('.code-editor');
-	let editor = textarea.editorInstance;
-	let source = editor.getValue();
+app.decodeURLData = function (data) {
+	let source = atob(data);
+	source = pako.inflate(source);
+	source = uintToString(source);
 
+	return source;
+};
+
+app.encodeURLdata = function (source) {
 	source = pako.deflate(source);
 	source = String.fromCharCode.apply(null, source);
 	source = btoa(source);
-	source = location.protocol + '//' + location.host + location.pathname + '#s=' + source;
 
-	window.prompt('This URL contains the current editor content:', source);
+	return source;
+};
+
+document.querySelector('#source-link').addEventListener('click', () => {
+	let data = app.encodeURLdata(app.editorSource());
+	let url = location.protocol + '//' + location.host + location.pathname + '#s=' + data;
+
+	app.prompt('This URL contains the current editor content:', url);
 });
 
-window.Bliplay = new BliplayController({
-	doneEvent: () => {
-		document.documentElement.classList.remove('playing');
-	},
 });
+
+app.addRun(function () {
 
 function addURLDataOptions(fileSelect, source) {
 	let optGroup = document.createElement('optgroup');
@@ -69,22 +99,38 @@ function addURLDataOptions(fileSelect, source) {
 	fileSelect.selectedIndex = fileSelect.options.length - 1;
 }
 
-const sourceRaw = /^#s=(.*)$/.exec(window.location.hash);
+function urlHashContent(hash) {
+	const data = /^#s=(.*)$/.exec(hash);
 
-if (sourceRaw) {
-	source = atob(sourceRaw[1]);
-	source = pako.inflate(source);
-	source = uintToString(source);
-
-	if (source) {
-		setSource(source);
-		addURLDataOptions(fileSelect, source);
-	}
-	else {
-		window.alert('Failed to decode URL data');
+	if (data) {
+		return data[1];
 	}
 }
-else {
+
+function parseURLData() {
+	const fileSelect = app.fileSelect;
+	const data = urlHashContent(window.location.hash);
+
+	if (data) {
+		const source = app.decodeURLData(data);
+
+		if (source) {
+			app.setSource(source);
+			addURLDataOptions(fileSelect, source);
+
+			return true;
+		}
+		else {
+			app.alert('Failed to decode URL data');
+		}
+	}
+
+	return false;
+}
+
+if (!parseURLData()) {
 	fileSelect.selectedIndex = 0;
-	changeFile(fileSelect);
+	app.changeFile();
 }
+
+});

@@ -50,5 +50,5 @@ You can now run `index.html` on a local webserver. Opening it directly from the 
 
 ## Some Articles
 
-<https://medium.com/@eliamaino/calling-c-functions-from-javascript-with-emscripten-first-part-e99fb6eedb22>
-<https://stackoverflow.com/questions/41875728/pass-a-javascript-array-as-argument-to-a-webassembly-function>
+- <https://medium.com/@eliamaino/calling-c-functions-from-javascript-with-emscripten-first-part-e99fb6eedb22>
+- <https://stackoverflow.com/questions/41875728/pass-a-javascript-array-as-argument-to-a-webassembly-function>

@@ -4,7 +4,7 @@ NAME = bliplay
 SRC = src
 DIR = assets
 MODULE_NAME = Bliplay
-TARGET_MAIN = $(DIR)/js/$(NAME).js
+TARGET_MAIN = $(DIR)/wasm/$(NAME).js
 TARGETS_ALL = $(TARGET_MAIN) $(TARGET_MAIN:%.js=%.wasm)
 
 BKSRC = bliplay/BlipKit/src
@@ -25,7 +25,6 @@ CFLAGS = -O2 -Wall -I./$(BKSRC) -I./$(BPSRC) -I./$(BUSRC) -DBK_USE_64_BIT=0
 #CFLAGS = -O0 -g -Wall -I./$(BKSRC) -I./$(BPSRC) -I./$(BUSRC) -DBK_USE_64_BIT=0
 
 OTHER_FLAGS = \
-	-s ASSERTIONS=2 \
 	-s WASM=1 \
 	-s NO_EXIT_RUNTIME=1 \
 	-s EXPORTED_FUNCTIONS='$(EXPORTS)' \
@@ -33,6 +32,7 @@ OTHER_FLAGS = \
 	-s EXPORT_NAME="'$(MODULE_NAME)'"
 
 # Debug
+#	-s ASSERTIONS=2 \
 #	-s ALIASING_FUNCTION_POINTERS=0 \
 #	-s SAFE_HEAP=1 \
 #	-s DETERMINISTIC=1

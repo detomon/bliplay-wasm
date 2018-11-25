@@ -5,6 +5,7 @@ window.app = {
 		files: 'files/',
 		assets: 'assets/',
 		scripts: 'assets/js/',
+		wasm: 'assets/wasm/',
 		sounds:'assets/sound/',
 	},
 

@@ -133,7 +133,7 @@ class BliplayController {
 	}
 
 	locateFile(file) {
-		return this.config.paths.scripts + file;
+		return this.config.paths.wasm + file;
 	}
 
 	_filePutContents(path, data) {

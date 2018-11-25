@@ -11,6 +11,7 @@ window.app = {
 
 	initFuncs: [],
 	runFuncs: [],
+	loadPromises: [],
 
 	init: function () {
 		this.initFuncs.forEach((func) => {
@@ -21,18 +22,24 @@ window.app = {
 			func(this);
 		});
 
-		document.documentElement.classList.add('loaded');
+		Promise.all(this.loadPromises).finally(() => {
+			document.documentElement.classList.add('loaded');
+		});
 	},
 
 	addInit: function (func) {
 		this.initFuncs.push(func);
 	},
 
+	addLoadPromise: function (func) {
+		this.loadPromises.push(func);
+	},
+
 	addRun: function (func) {
 		this.runFuncs.push(func);
 	},
 
-	alert: function (message) {
+	error: function (message) {
 		return window.alert(message);
 	},
 

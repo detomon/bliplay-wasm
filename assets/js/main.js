@@ -108,29 +108,42 @@ function urlHashContent(hash) {
 }
 
 function parseURLData() {
-	const fileSelect = app.fileSelect;
-	const data = urlHashContent(window.location.hash);
+	return new Promise((resolve, reject) => {
+		const fileSelect = app.fileSelect;
+		const data = urlHashContent(window.location.hash);
 
-	if (data) {
-		const source = app.decodeURLData(data);
+		if (data) {
+			const source = app.decodeURLData(data);
 
-		if (source) {
-			app.setSource(source);
-			addURLDataOptions(fileSelect, source);
-
-			return true;
+			if (source) {
+				resolve(source);
+			}
+			else {
+				reject('Failed to decode URL data');
+			}
 		}
 		else {
-			app.alert('Failed to decode URL data');
+			resolve(null);
 		}
-	}
-
-	return false;
+	});
 }
 
-if (!parseURLData()) {
-	app.fileSelect.selectedIndex = 0;
-	app.changeFile();
-}
+const parsePromise = parseURLData().then((source) => {
+	return app.fileIndexPromise.then(() => {
+		if (source) {
+			addURLDataOptions(app.fileSelect, source);
+			app.setSource(source);
+		}
+		else {
+			app.fileSelect.selectedIndex = 0;
+			app.changeFile();
+		}
+	});
+}).then((source)=> {
+}).catch((message) => {
+	app.error(message);
+});
+
+app.addLoadPromise(parsePromise);
 
 });

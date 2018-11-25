@@ -42,7 +42,7 @@ app.stopAction = () => {
 }
 
 app.editorSource = () => {
-	return app.sourceEditor.getValue();
+	return app.editorInstance.getValue();
 };
 
 document.querySelector('#start').addEventListener('click', () => {

@@ -43,16 +43,23 @@ function selectedOption(select) {
 	return select.options[select.selectedIndex];
 }
 
+let files = {};
+
 app.changeFile = function () {
 	const option = selectedOption(app.fileSelect);
 	const path = option.value;
 	const data = option.data;
 	let dataPromise;
 
-	if (path) {
+	if (files[path]) {
+		dataPromise = files[path];
+	}
+	else if (path) {
 		dataPromise = fetch(path).then((response) => {
 			return response.text();
 		});
+
+		files[path] = dataPromise;
 	}
 	else if (data) {
 		dataPromise = Promise.resolve(data);

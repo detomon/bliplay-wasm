@@ -4,6 +4,7 @@ class BliplayController {
 		this.config = config || {};
 		this.currentEditor = null;
 		this.lock = false;
+		this.files = {};
 
 		this.printErr = (line) => {
 			if (this.currentEditor) {
@@ -141,29 +142,28 @@ class BliplayController {
 	}
 
 	_loadSamples(paths) {
-		let fetches = paths.map((path) => {
-			console.debug('Loading sample', path);
+		paths.forEach((path) => {
+			if (!this.files[path]) {
+				this.files[path] = fetch(this.config.paths.sounds + path).then((result) => {
+					if (result.status !== 200) {
+						throw 'Failed with status: ' + result.status;
+					}
 
-			return fetch(this.config.paths.sounds + path).then((result) => {
-				if (result.status !== 200) {
-					return null;
-				}
-
-				return result.arrayBuffer();
-			}).then((bytes) => {
-				// ignore invalid samples
-				if (bytes) {
+					return result.arrayBuffer();
+				}).then((bytes) => {
 					const data = new Uint8Array(bytes);
 					const result = this._filePutContents(path, data);
 
 					if (result !== 0) {
 						throw "Could not write file '" + path + "'";
 					}
-				}
-			});
+				});
+			}
 		});
 
-		return Promise.all(fetches);
+		return Promise.all(paths.map((path) => {
+			return this.files[path];
+		}));
 	}
 
 	runSource(editor, sourceCode) {

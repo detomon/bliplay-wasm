@@ -5,6 +5,8 @@ class BliplayController {
 		this.currentEditor = null;
 		this.lock = false;
 		this.files = {};
+		this.readyResolve = null;
+		this.readyReject = null;
 
 		this.printErr = (line) => {
 			if (this.currentEditor) {
@@ -17,6 +19,11 @@ class BliplayController {
 		this.print = (line) => {
 			console.log(line);
 		};
+
+		this.readyPromise = new Promise((resolve, reject) => {
+			this.readyResolve = resolve;
+			this.readyReject = reject;
+		});
 	}
 
 	connectNode() {
@@ -206,6 +213,7 @@ class BliplayController {
 
 	readyEvent() {
 		this.init();
+		this.readyResolve();
 		console.debug('Controller ready');
 	}
 

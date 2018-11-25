@@ -26,18 +26,18 @@ app.playAction = () => {
 
 	textarea.sourceEditor.reset();
 
-	document.documentElement.classList.add('playing');
-	document.documentElement.classList.remove('loaded');
+	app.setPlaying(true);
+	app.setLoading(true);
 
-
-	// TODO: wait for readyEvent
-	window.Bliplay.runSource(textarea.sourceEditor, source).finally(() => {
-		document.documentElement.classList.add('loaded');
-	});
+	window.Bliplay.readyPromise.then(() => {
+		window.Bliplay.runSource(textarea.sourceEditor, source).finally(() => {
+			app.setLoading(false);
+		});
+	})
 }
 
 app.stopAction = () => {
-	document.documentElement.classList.remove('playing');
+	app.setPlaying(false);
 	window.Bliplay.stopAudio();
 }
 
@@ -52,6 +52,8 @@ document.querySelector('#start').addEventListener('click', () => {
 document.querySelector('#stop').addEventListener('click', () => {
 	app.stopAction();
 });
+
+app.addLoadPromise(window.Bliplay.readyPromise);
 
 function uintToString(uintArray) {
 	const encodedString = String.fromCharCode.apply(null, uintArray);

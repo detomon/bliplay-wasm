@@ -23,7 +23,7 @@ window.app = {
 		});
 
 		Promise.all(this.loadPromises).finally(() => {
-			document.documentElement.classList.add('loaded');
+			app.setLoading(false);
 		});
 	},
 
@@ -45,6 +45,14 @@ window.app = {
 
 	prompt: function (message, content) {
 		return window.prompt(message, content);
+	},
+
+	setLoading: function (loading) {
+		document.documentElement.classList.toggle('loaded', !loading);
+	},
+
+	setPlaying: function (playing) {
+		document.documentElement.classList.toggle('playing', playing);
 	},
 };
 

@@ -108,7 +108,7 @@ input[type=button], input[type=submit], input[type=reset],
 .button {
 	cursor: pointer;
 	font: inherit;
-	background-color: #404040;
+	background-color: #2b303b;
 	color: var(--input-text-color);
 	border-radius: 0.25em;
 	-webkit-appearance: none;

@@ -16,21 +16,21 @@
 <body>
 
 <div class="wrapper">
-	<div class="source-wrapper">
+	<section class="source-wrapper flex-grow">
 		<textarea class="code-editor" id="source"></textarea>
-	</div>
-	<footer class="controls-wrapper">
+	</section>
+	<footer class="controls-wrapper flex-none">
 		<div class="control hide-on-play">
-			<button class="button button-green icon-play" id="start" title="Play"></button>
+			<button class="button button-green button-icon icon-play" id="start" title="Play"></button>
 		</div>
 		<div class="control show-on-play">
-			<button class="button button-red icon-stop" id="stop" title="Stop"></button>
+			<button class="button button-red button-icon icon-stop" id="stop" title="Stop"></button>
 		</div>
 		<div class="control">
-			<select id="file-select" title="Choose Track…"></select>
+			<select class="button" id="file-select" title="Choose Track…"></select>
 		</div>
 		<div class="control">
-			<button class="button icon-export-alt" id="source-link" title="Share Content…"></button>
+			<button class="button button-icon icon-export-alt" id="source-link" title="Share Content…"></button>
 		</div>
 	</footer>
 </div>

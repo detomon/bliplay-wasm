@@ -8,7 +8,7 @@ window.Bliplay = new BliplayController({
 
 app.addInit(function (app) {
 
-const textarea = document.querySelector('.code-editor');
+const textarea = app.$('.code-editor');
 const editor = textarea.editorInstance;
 
 app.editorInstance = editor;
@@ -20,38 +20,38 @@ app.setSource = (source) => {
 }
 
 app.playAction = () => {
-	const textarea = document.querySelector('.code-editor');
+	const textarea = app.$('.code-editor');
 	const editor = textarea.editorInstance;
 	const source = editor.getValue();
 
 	textarea.sourceEditor.reset();
 
-	app.setPlaying(true);
-	app.setLoading(true);
+	app.setState('playing', true);
+	app.setState('loading', true);
 
 	window.Bliplay.readyPromise.then(() => {
 		window.Bliplay.runSource(textarea.sourceEditor, source).catch(() => {
-			app.setPlaying(false);
+			app.setState('playing', false);
 		}).finally(() => {
-			app.setLoading(false);
+			app.setState('loading', false);
 		});
 	})
 }
 
 app.stopAction = () => {
-	app.setPlaying(false);
+	app.setState('playing', false);
 	window.Bliplay.stopAudio();
-}
+};
 
 app.editorSource = () => {
 	return app.editorInstance.getValue();
 };
 
-document.querySelector('#start').addEventListener('click', () => {
+app.$('#start').addEventListener('click', () => {
 	app.playAction();
 });
 
-document.querySelector('#stop').addEventListener('click', () => {
+app.$('#stop').addEventListener('click', () => {
 	app.stopAction();
 });
 
@@ -80,7 +80,7 @@ app.encodeURLdata = function (source) {
 	return source;
 };
 
-document.querySelector('#source-link').addEventListener('click', () => {
+app.$('#source-link').addEventListener('click', () => {
 	let data = app.encodeURLdata(app.editorSource());
 	let url = location.protocol + '//' + location.host + location.pathname + '#s=' + data;
 
@@ -91,14 +91,21 @@ document.querySelector('#source-link').addEventListener('click', () => {
 
 app.addRun(function () {
 
-function addURLDataOptions(fileSelect, source) {
-	let optGroup = document.createElement('optgroup');
-	optGroup.label = 'Other';
-	fileSelect.appendChild(optGroup);
+function setURLDataOption(fileSelect, source) {
+	let optGroup = fileSelect.querySelector('optgroup.other');
 
-	let option = new Option('URL Data', '');
+	if (!optGroup) {
+		optGroup = document.createElement('optgroup');
+		optGroup.label = 'Other';
+		optGroup.classList.add('other');
+		fileSelect.appendChild(optGroup);
+
+		let option = new Option('URL Data', '');
+		optGroup.appendChild(option);
+	}
+
+	let option = optGroup.querySelector('option');
 	option.data = source;
-	optGroup.appendChild(option);
 
 	fileSelect.selectedIndex = fileSelect.options.length - 1;
 }
@@ -112,9 +119,11 @@ function urlHashContent(hash) {
 }
 
 function parseURLData() {
+	const hash = window.location.hash;
+
 	return new Promise((resolve, reject) => {
 		const fileSelect = app.fileSelect;
-		const data = urlHashContent(window.location.hash);
+		const data = urlHashContent(hash);
 
 		if (data) {
 			const source = app.decodeURLData(data);
@@ -132,22 +141,30 @@ function parseURLData() {
 	});
 }
 
-const parsePromise = parseURLData().then((source) => {
-	return app.fileIndexPromise.then(() => {
-		if (source) {
-			addURLDataOptions(app.fileSelect, source);
-			app.setSource(source);
-		}
-		else {
-			app.fileSelect.selectedIndex = 0;
-			app.changeFile();
-		}
-	});
-}).then((source)=> {
-}).catch((message) => {
-	app.error(message);
-});
+function setSource(source) {
+	setURLDataOption(app.fileSelect, source);
 
-app.addLoadPromise(parsePromise);
+	if (source) {
+		app.setSource(source);
+	}
+	else {
+		app.fileSelect.selectedIndex = 0;
+		app.fileSelect.dispatchEvent(new Event('change'));
+	}
+}
+
+function setSourceFromHash() {
+	return parseURLData().then((source) => {
+		return app.fileIndexPromise.then(() => {
+			setSource(source);
+		});
+	});
+}
+
+app.addLoadPromise(setSourceFromHash());
+
+window.addEventListener('hashchange', () => {
+	setSourceFromHash();
+});
 
 });

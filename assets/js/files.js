@@ -9,9 +9,33 @@ function fetchFileIndex() {
 }
 
 function initFileSelect(select, files) {
+	let paths = {};
+
 	select.addEventListener('change', (e) => {
-		app.changeFile();
 		app.stopAction();
+
+		const option = selectedOption(app.fileSelect);
+		const path = option.value;
+		const data = option.data;
+		let dataPromise;
+
+		if (paths[path]) {
+			dataPromise = paths[path];
+		}
+		else if (path) {
+			dataPromise = fetch(path).then((response) => {
+				return response.text();
+			});
+
+			paths[path] = dataPromise;
+		}
+		else if (data) {
+			dataPromise = Promise.resolve(data);
+		}
+
+		dataPromise.then((source) => {
+			app.setSource(source);
+		});
 	});
 
 	files.forEach((group) => {
@@ -31,7 +55,7 @@ function initFileSelect(select, files) {
 	});
 }
 
-app.fileSelect = document.querySelector('#file-select');
+app.fileSelect = app.$('#file-select');
 
 app.fileIndexPromise = fetchFileIndex().then((files) => {
 	initFileSelect(app.fileSelect, files);
@@ -41,33 +65,6 @@ app.addLoadPromise(app.fileIndexPromise);
 
 function selectedOption(select) {
 	return select.options[select.selectedIndex];
-}
-
-let files = {};
-
-app.changeFile = function () {
-	const option = selectedOption(app.fileSelect);
-	const path = option.value;
-	const data = option.data;
-	let dataPromise;
-
-	if (files[path]) {
-		dataPromise = files[path];
-	}
-	else if (path) {
-		dataPromise = fetch(path).then((response) => {
-			return response.text();
-		});
-
-		files[path] = dataPromise;
-	}
-	else if (data) {
-		dataPromise = Promise.resolve(data);
-	}
-
-	dataPromise.then((source) => {
-		app.setSource(source);
-	});
 }
 
 });

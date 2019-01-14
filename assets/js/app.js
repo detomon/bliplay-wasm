@@ -13,6 +13,17 @@ window.app = {
 	runFuncs: [],
 	loadPromises: [],
 
+	$: function (selector) {
+		return document.querySelector(selector);
+	},
+
+	$$: function (selector) {
+		return document.querySelectorAll(selector);
+	},
+
+	$html: document.documentElement,
+	$body: document.body,
+
 	init: function () {
 		this.initFuncs.forEach((func) => {
 			func(this);
@@ -22,8 +33,12 @@ window.app = {
 			func(this);
 		});
 
+		app.setState('loading', true);
+
 		Promise.all(this.loadPromises).finally(() => {
-			app.setLoading(false);
+			app.setState('loading', false);
+		}).catch((message) => {
+			app.error(message);
 		});
 	},
 
@@ -39,7 +54,13 @@ window.app = {
 		this.runFuncs.push(func);
 	},
 
+	alert: function (message) {
+		console.log(message);
+		return window.alert(message);
+	},
+
 	error: function (message) {
+		console.error(message);
 		return window.alert(message);
 	},
 
@@ -47,12 +68,8 @@ window.app = {
 		return window.prompt(message, content);
 	},
 
-	setLoading: function (loading) {
-		document.documentElement.classList.toggle('loaded', !loading);
-	},
-
-	setPlaying: function (playing) {
-		document.documentElement.classList.toggle('playing', playing);
+	setState(name, set) {
+		this.$html.classList.toggle(name, set);
 	},
 };
 

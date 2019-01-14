@@ -39,15 +39,15 @@
 	pointer-events: none;
 }
 
-html:not(.loaded) {
+html.loading {
 	overflow: hidden;
 }
 
-html:not(.loaded) body {
+html.loading body {
 	overflow: hidden;
 }
 
-html:not(.loaded) .page-loader {
+html.loading .page-loader {
 	opacity: 1;
 	height: 100%;
 	transition-delay: 0, 0;

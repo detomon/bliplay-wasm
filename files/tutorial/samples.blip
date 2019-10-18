@@ -5,8 +5,8 @@
 % The following samples are available:
 %
 % bass.wav, crotales.wav, drum1.wav, drum2.wav, hat1.wav, hat2.wav, hat3.wav,
-% hat4.wav, hat5.wav, lead1.wav, lead2.wav, organ1.wav, organ2.wav, pluck.wav,
-% snare1.wav, xylo.wav
+% hat4.wav, hat5.wav, lead1.wav, lead2.wav, oof.wav, organ1.wav, organ2.wav,
+% pika.wav, pluck.wav, snare1.wav, xylo.wav
 
 % Define sample 'organ'
 [sample:organ

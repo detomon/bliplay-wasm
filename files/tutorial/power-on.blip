@@ -1,10 +1,95 @@
+% ------------------------------------------------------------------------------
+% POWER ON!
+%
+% This is the interactive bliplay sound player
+% It plays chiptune music from text commands
+%
+% The code can be obtained here:
+% https://github.com/detomon/bliplay-wasm
+%
+% ------------------------------------------------------------------------------
+
+
+% ------------------------------------------------------------------------------
+% SYNTAX DESCRIPTION
+%
+% https://github.com/detomon/bliplay/blob/master/SYNTAX.md
+% ------------------------------------------------------------------------------
+
+
+% ------------------------------------------------------------------------------
+% EXAMPLES
+%
+% Choose other examples from the dropdow below.
+% All examples are editable. "Play" plays the current code.
+% ------------------------------------------------------------------------------
+
+
+% ------------------------------------------------------------------------------
+% POSITION CURSORS
+%
+% As you surely have noticed there is a yellow marker on the left side when
+% the code is playing. This indicates the current play position. In this
+% example, only one track is used. In later examples multiple tracks are used -
+% each with its own position cursor.
+% ------------------------------------------------------------------------------
+
+
+% Set speed.
+%
+% This sets the number of 'ticks' for one 'step'. A 'tick' is by default 1/240th
+% of a second. The 'step' command 's' (used further below) sets the time to wait
+% before the next command is executed.
+%
+% BPM can be calculated with: BPM = 240 * 60 / st / 4
 st:18 % 200 BPM
+
+% Set waveform.
+%
+% Custom waveforms can also be defined which are introduced in later examples.
+% Predefined waveforms are: square, triangle, noise, sawtooth, sine. For
+% historical reasons, the triangle waveform is the only waveform which ignores
+% the volume attribute
 w:square
+
+% Set duty cycle of the square wave.
+%
+% The duty cycle defines the width of the square wave's wave crest. There are
+% 16 duty cycle phases. A value of 8 accords to 50%.
 dc:8
+
+% Set note C on octave 5.
+%
+% Notes range from c0 to c8.
 a:c5
+
+% Wait 1 step.
+%
+% The number of step ticks was set to 18, so this is 1 * 18 = 18 ticks.
 s:1
+
+% Set note C on octave 6.
 a:c6
+
+% Enable volume slide effect.
+%
+% This slides the current volume to a new value of 0 within the given duration.
+% Effect durations can be given in number of ticks or as a fraction of steps.
+% In this case, the slide goes for 9 steps.
 e:vs:9/1;v:0
+
+% Wait 9 steps.
+%
+% As the volume slide effect is in progress with the same length, it will end
+% exactly when the next command after the step is executed.
 s:9
+
+% Release note.
 r
+
+% The volume is now 0.
+%
+% Reset volume to maximum, but first disable volume slide effect or the volume
+% will slide up again when setting a new value. Effects are disabled by omitting
+% the values
 e:vs;v:255

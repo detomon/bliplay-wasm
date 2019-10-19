@@ -1,5 +1,25 @@
 % ------------------------------------------------------------------------------
 % INSTRUMENTS
+%
+% The name "instrument" is somewhat missleading, as an instrument does not
+% define the waveform itself. Instead, instruments define envelopes over certain
+% track attributes. The following envelope types are defined:
+% Volume, Panning, Pitch and Duty Cycle
+%
+% Each envelope has an attack phase which is played when a note is set,
+% a sustain phase which is repeated as long as the note is set, and a release
+% phase which played when the note is released.
+%
+% +--------+-------------+---------+
+% | Attack | < Sustain > | Release |
+% +--------+-------------+---------+
+%
+% There are two types of envelopes:
+% Sequence envelopes are made of multiple values which are played for 4 ticks
+% each.
+% Interpolated envelopes additionally have a step size for each value (Sequence
+% envelopes have a fixed step size of 4 ticks). The attribute value is also
+% interpolated between two steps.
 % ------------------------------------------------------------------------------
 
 % Set speed.

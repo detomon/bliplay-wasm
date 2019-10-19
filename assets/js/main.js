@@ -30,7 +30,9 @@ app.playAction = () => {
 	app.setLoading(true);
 
 	window.Bliplay.readyPromise.then(() => {
-		window.Bliplay.runSource(textarea.sourceEditor, source).finally(() => {
+		window.Bliplay.runSource(textarea.sourceEditor, source).catch(() => {
+			app.setPlaying(false);
+		}).finally(() => {
 			app.setLoading(false);
 		});
 	})

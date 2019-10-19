@@ -29,6 +29,12 @@
       "css": "play",
       "code": 59394,
       "src": "fontawesome"
+    },
+    {
+      "uid": "48b79f27e4798f23bafa07b55dbe5b73",
+      "css": "book",
+      "code": 59395,
+      "src": "entypo"
     }
   ]
 }

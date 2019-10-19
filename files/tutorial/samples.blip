@@ -1,5 +1,7 @@
 % ------------------------------------------------------------------------------
 % Samples
+%
+% TODO...
 % ------------------------------------------------------------------------------
 
 % The following samples are available:
@@ -8,13 +10,13 @@
 % hat4.wav, hat5.wav, lead1.wav, lead2.wav, oof.wav, organ1.wav, organ2.wav,
 % pika.wav, pluck.wav, snare1.wav, xylo.wav
 
-% Define sample 'organ'
-[sample:organ
-	load:wav:"organ1.wav"
+% Define sample 'pika'
+[sample:pika
+	load:wav:"pika.wav"
 ]
 
-% Set sample 'organ'
-d:organ
+% Set sample 'pika'
+d:pika
 
 e:pr:48
 a:c4;s:2;r;s:2

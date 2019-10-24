@@ -18,6 +18,9 @@
 	"title": "Loops",
 	"subdir": "loops/",
 	"files": [{
+		"title": "Simple",
+		"path": "simple.blip"
+	}, {
 		"title": "Loop #1",
 		"path": "loop-1.blip"
 	}, {

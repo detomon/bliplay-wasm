@@ -24,6 +24,8 @@ window.app = {
 	$html: document.documentElement,
 	$body: document.body,
 
+	version: document.body.dataset.version,
+
 	init: function () {
 		this.initFuncs.forEach((func) => {
 			func(this);

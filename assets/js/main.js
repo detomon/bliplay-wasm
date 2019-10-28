@@ -4,6 +4,7 @@ window.Bliplay = new BliplayController({
 	},
 }, {
 	paths: app.dirs,
+	version: app.version,
 });
 
 app.addInit(function (app) {

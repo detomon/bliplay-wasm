@@ -1,7 +1,7 @@
 class BliplayController {
 	constructor(delegate, config) {
 		this.delegate = delegate || {};
-		this.config = config || {};
+		this.config = config || { version: '0' };
 		this.currentEditor = null;
 		this.lock = false;
 		this.files = {};
@@ -141,7 +141,7 @@ class BliplayController {
 	}
 
 	locateFile(file) {
-		return this.config.paths.wasm + file;
+		return this.config.paths.wasm + file + '?t=' + this.config.version;
 	}
 
 	_filePutContents(path, data) {

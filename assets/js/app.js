@@ -6,7 +6,7 @@ window.app = {
 		assets: 'assets/',
 		scripts: 'assets/js/',
 		wasm: 'assets/wasm/',
-		sounds:'assets/sound/',
+		sounds:'/assets/sound/',
 	},
 
 	initFuncs: [],
@@ -23,6 +23,10 @@ window.app = {
 
 	$html: document.documentElement,
 	$body: document.body,
+	track: function () {
+		const object = (window._paq || []);
+		object.push.apply(object, arguments);
+	},
 
 	version: document.body.dataset.version,
 
@@ -70,8 +74,25 @@ window.app = {
 		return window.prompt(message, content);
 	},
 
-	setState(name, set) {
+	setState: function (name, set) {
 		this.$html.classList.toggle(name, set);
+	},
+
+	trackEvent: function (options) {
+		options = Object.assign({
+			category: '',
+			action: '',
+			name: '',
+			value: '',
+		}, options);
+
+		this.track([
+			'trackEvent',
+			options.category,
+			options.action,
+			options.name,
+			options.value,
+		]);
 	},
 };
 

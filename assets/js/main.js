@@ -15,10 +15,14 @@ const editor = textarea.editorInstance;
 app.editorInstance = editor;
 app.sourceEditor = textarea.sourceEditor;
 
+app.getSource = () => {
+	return app.editorInstance.getValue();
+};
+
 app.setSource = (source) => {
 	app.sourceEditor.reset();
 	app.editorInstance.setValue(source);
-}
+};
 
 app.playAction = () => {
 	const textarea = app.$('.code-editor');
@@ -37,7 +41,7 @@ app.playAction = () => {
 			app.setState('loading', false);
 		});
 	})
-}
+};
 
 app.stopAction = () => {
 	app.setState('playing', false);
@@ -130,6 +134,7 @@ function parseURLData() {
 			const source = app.decodeURLData(data);
 
 			if (source) {
+				app.trackEvent({ category: 'source', action: 'url', name: 'data', value: data });
 				resolve(source);
 			}
 			else {
@@ -142,30 +147,41 @@ function parseURLData() {
 	});
 }
 
-function setSource(source) {
-	setURLDataOption(app.fileSelect, source);
-
-	if (source) {
-		app.setSource(source);
-	}
-	else {
-		app.fileSelect.selectedIndex = 0;
-		app.fileSelect.dispatchEvent(new Event('change'));
-	}
-}
-
-function setSourceFromHash() {
+function updateFromURLData() {
 	return parseURLData().then((source) => {
-		return app.fileIndexPromise.then(() => {
-			setSource(source);
-		});
+		if (source) {
+			setURLDataOption(app.fileSelect, source);
+			app.setSource(source);
+		}
+		else {
+			app.fileSelect.selectedIndex = 0;
+			app.updateFile();
+		}
 	});
 }
 
-app.addLoadPromise(setSourceFromHash());
+/*const parsePromise = parseURLData().then((source) => {
+	return app.fileIndexPromise.then(() => {
+		if (source) {
+			addURLDataOptions(app.fileSelect, source);
+			app.setSource(source);
+			app.trackEvent({ category: 'source', action: 'url', name: 'data', value: 'source' });
+		}
+		else {
+			app.fileSelect.selectedIndex = 0;
+			app.updateFile();
+		}
+	});
+});*/
+
+const parsePromise = app.fileIndexPromise.then(() => {
+	return updateFromURLData();
+});
+
+app.addLoadPromise(parsePromise);
 
 window.addEventListener('hashchange', () => {
-	setSourceFromHash();
+	updateFromURLData();
 });
 
 });

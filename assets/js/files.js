@@ -1,5 +1,7 @@
 app.addInit(function () {
 
+let paths = {};
+
 function fetchFileIndex() {
 	const url = app.dirs.files + 'index.json';
 
@@ -8,34 +10,36 @@ function fetchFileIndex() {
 	});
 }
 
-function initFileSelect(select, files) {
-	let paths = {};
+function updateFile() {
+	app.stopAction();
 
-	select.addEventListener('change', (e) => {
-		app.stopAction();
+	const option = selectedOption(app.fileSelect);
+	const path = option.value;
+	const data = option.data;
+	let dataPromise;
 
-		const option = selectedOption(app.fileSelect);
-		const path = option.value;
-		const data = option.data;
-		let dataPromise;
-
-		if (paths[path]) {
-			dataPromise = paths[path];
-		}
-		else if (path) {
-			dataPromise = fetch(path).then((response) => {
-				return response.text();
-			});
-
-			paths[path] = dataPromise;
-		}
-		else if (data) {
-			dataPromise = Promise.resolve(data);
-		}
-
-		dataPromise.then((source) => {
-			app.setSource(source);
+	if (paths[path]) {
+		dataPromise = paths[path];
+	}
+	else if (path) {
+		dataPromise = fetch(path).then((response) => {
+			return response.text();
 		});
+
+		paths[path] = dataPromise;
+	}
+	else if (data) {
+		dataPromise = Promise.resolve(data);
+	}
+
+	dataPromise.then((source) => {
+		app.setSource(source);
+		});
+}
+
+function initFileSelect(select, files) {
+	select.addEventListener('change', (e) => {
+		updateFile();
 	});
 
 	files.forEach((group) => {
@@ -56,6 +60,7 @@ function initFileSelect(select, files) {
 }
 
 app.fileSelect = app.$('#file-select');
+app.updateFile = updateFile;
 
 app.fileIndexPromise = fetchFileIndex().then((files) => {
 	initFileSelect(app.fileSelect, files);

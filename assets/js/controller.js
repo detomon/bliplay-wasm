@@ -129,8 +129,11 @@ class BliplayController {
 	init() {
 		const numFrames = 2048;
 		const numChannels = 2;
+		const sampleRate = 44100;
 
-		this.context = new (window.AudioContext || window.webkitAudioContext)();
+		this.context = new (window.AudioContext || window.webkitAudioContext)({
+			sampleRate: sampleRate,
+		});
 		//this.source = this.context.createBufferSource();
 		this.generatorNode = this._createGeneratorNode(numFrames, numChannels);
 

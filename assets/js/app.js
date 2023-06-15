@@ -7,6 +7,7 @@ window.app = {
 		scripts: 'assets/js/',
 		wasm: 'assets/wasm/',
 		sounds:'/assets/sound/',
+		version: '0.3.1',
 	},
 
 	initFuncs: [],

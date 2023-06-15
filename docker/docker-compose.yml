@@ -1,0 +1,8 @@
+version: '3.6'
+services:
+  web:
+    image: nginx
+    volumes:
+      - .:/usr/share/nginx/html
+    ports:
+      - 8184:80

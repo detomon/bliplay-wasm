@@ -46,7 +46,11 @@ $ make
 
 ## Running
 
-You can now run `index.html` on a local webserver. Opening it directly from the file system may not work.
+You can now run `index.html` on a webserver. Opening it directly from the file system may not work. Or by running the following, which will start a nginx container:
+
+```sh
+make server-start
+```
 
 ## Some Articles
 

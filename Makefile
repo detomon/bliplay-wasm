@@ -43,7 +43,7 @@ OTHER_FLAGS = \
 
 ALL_FLAGS = $(CFLAGS) $(OTHER_FLAGS)
 
-.PHONY: clean
+.PHONY: clean serve serve-stop
 
 all: $(TARGETS_ALL)
 
@@ -52,3 +52,11 @@ $(TARGETS_ALL): $(SOURCES)
 
 clean:
 	rm -f $(TARGETS_ALL)
+
+server-start:
+	docker compose -f docker/docker-compose.yml --project-directory . up -d
+	@echo ""
+	@echo "Server started at: http://localhost:8184"
+
+server-stop:
+	docker compose -f docker/docker-compose.yml --project-directory . down

@@ -34,7 +34,7 @@ function updateFile() {
 
 	dataPromise.then((source) => {
 		app.setSource(source);
-		});
+	});
 }
 
 function initFileSelect(select, files) {

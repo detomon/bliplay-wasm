@@ -7,6 +7,7 @@ class BliplayController {
 		this.files = {};
 		this.readyResolve = null;
 		this.readyReject = null;
+		this.running = false;
 
 		this.printErr = (line) => {
 			if (this.currentEditor) {
@@ -83,11 +84,15 @@ class BliplayController {
 	startAudioContext() {
 		this._startAudioContext();
 		this.connectNode();
-		console.debug('Context start');
+		this.running = true;
 	}
 
 	stopAudioContext() {
-		console.debug('Context stop');
+		if (!this.running) {
+			return Promise.resolve();
+		}
+
+		this.running = false
 
 		return new Promise((resolve, reject) => {
 			this._stopAudioContext();
@@ -161,7 +166,7 @@ class BliplayController {
 		paths.forEach((path) => {
 			if (!this.files[path]) {
 				this.files[path] = fetch(this.config.paths.sounds + path).then((result) => {
-					if (result.status !== 200) {
+					if (!result.ok) {
 						throw 'Failed with status: ' + result.status;
 					}
 
@@ -229,7 +234,6 @@ class BliplayController {
 	readyEvent() {
 		this.init();
 		this.readyResolve();
-		console.debug('Controller ready');
 	}
 
 	doneEvent() {

@@ -148,7 +148,13 @@ class BliplayController {
 	}
 
 	_filePutContents(path, data) {
-		return this.ccall('writeFile', null, ['string', 'array', 'number'], [path, data, data.length]);
+		const ptr = this._malloc(data.length);
+		this.HEAP8.set(data, ptr);
+
+		const result = this.ccall('writeFile', null, ['string', 'number', 'number'], [path, ptr, data.length]);
+		this._free(ptr);
+
+		return result;
 	}
 
 	_loadSamples(paths) {

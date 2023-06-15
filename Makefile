@@ -16,8 +16,8 @@ SOURCES += $(wildcard $(BKSRC)/*.c)
 SOURCES += $(wildcard $(BPSRC)/*.c)
 SOURCES += $(wildcard $(BUSRC)/*.c)
 
-EXPORTS = ["_main"]
-RUNTIME_EXPORTS = ["ccall","cwrap","UTF8ArrayToString"]
+EXPORTS = ["_main", "_malloc", "_free"]
+RUNTIME_EXPORTS = ["ccall", "cwrap", "UTF8ArrayToString"]
 
 CFLAGS = -O2 -Wall -I./$(BKSRC) -I./$(BPSRC) -I./$(BUSRC) -DBK_USE_64_BIT=0
 

@@ -13,6 +13,7 @@ static BKContext ctx;
 static BKInt lineNumbers[255];
 static BKInt activeLineNumbers[255];
 static BKInt lineNumbersCount = 0;
+static BKUInt durationTicks = 0;
 
 static BKTKParser parser;
 static BKTKCompiler compiler;
@@ -254,6 +255,37 @@ BKInt createContext(void) {
 	return 0;
 }
 
+BKUInt calculateDuration() {
+	BKUInt ticks = 0;
+
+	for (BKInt i = 0; i < context.tracks.len; i++) {
+		BKInt running = 1;
+		BKInt trackTicks = 0;
+		BKTKTrack *track = *(BKTKTrack**) BKArrayItemAt(&context.tracks, i);
+		BKTKInterpreter *interpreter = (BKTKInterpreter *) &track->interpreter;
+
+		do {
+			BKInt stepTicks;
+
+			BKTKInterpreterAdvance(interpreter, track, &stepTicks);
+
+			if (running) {
+				trackTicks += stepTicks;
+			}
+
+			running = !(interpreter->object.flags & (BKTKInterpreterFlagHasStopped | BKTKInterpreterFlagHasRepeated));
+		}
+		while (running);
+
+		ticks = BKMax(ticks, trackTicks);
+	}
+
+	BKTKContextReset(&context);
+	BKContextReset(&ctx);
+
+	return ticks;
+}
+
 EMSCRIPTEN_KEEPALIVE
 int startAudioContext(void) {
 	BKInt res = 0;
@@ -272,13 +304,15 @@ int startAudioContext(void) {
 		fprintf(stderr, "Attaching context failed (%s)\n", BKStatusGetName(res));
 	}
 
+	durationTicks = 0;
+
 	if (res == 0) {
 		isRunning = 1;
+		durationTicks = calculateDuration();
 	}
 
 	return res;
 }
-
 
 EMSCRIPTEN_KEEPALIVE
 BKInt generate(int length) {
@@ -308,10 +342,18 @@ float const* getBuffer() {
 	return bufferFloat;
 }
 
+EMSCRIPTEN_KEEPALIVE
+BKUInt getTime(void) {
+	return BKTimeGetTime(ctx.currentTime);
+}
 
 EMSCRIPTEN_KEEPALIVE
-BKTime getTime(void) {
-	return ctx.currentTime;
+BKUInt getDuration() {
+	return (
+		(float)durationTicks
+		* (float)context.info.tickRate.factor
+		/ (float)context.info.tickRate.divisor
+		* sampleRate);
 }
 
 EMSCRIPTEN_KEEPALIVE

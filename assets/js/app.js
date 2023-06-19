@@ -30,6 +30,7 @@ window.app = {
 	},
 
 	version: document.body.dataset.version,
+	progressBar: null,
 
 	init: function () {
 		this.initFuncs.forEach((func) => {
@@ -41,6 +42,8 @@ window.app = {
 		});
 
 		app.setState('loading', true);
+
+		this.progressBar = this.$$('#progress-bar');
 
 		Promise.all(this.loadPromises).finally(() => {
 			app.setState('loading', false);

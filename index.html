@@ -20,20 +20,29 @@
 		<textarea class="code-editor" id="source"></textarea>
 	</section>
 	<footer class="controls-wrapper flex-none">
-		<div class="control hide-on-play">
-			<button class="button button-green button-icon icon-play" id="start" title="Play"></button>
-		</div>
-		<div class="control show-on-play">
-			<button class="button button-red button-icon icon-stop" id="stop" title="Stop"></button>
-		</div>
-		<div class="control">
-			<select class="button" id="file-select" title="Choose Track…"></select>
-		</div>
-		<div class="control">
-			<button class="button button-icon icon-export-alt" id="source-link" title="Share Content…"></button>
-		</div>
-		<div class="control">
-			<a href="https://github.com/detomon/bliplay/blob/master/SYNTAX.md" target="_blank" class="button button-icon icon-book" title="Syntax Manual"></a>
+		<div>
+			<div class="flex-nowrap">
+				<div class="control hide-on-play">
+					<button class="button button-green button-icon icon-play" id="start" title="Play"></button>
+				</div>
+				<div class="control show-on-play">
+					<button class="button button-red button-icon icon-stop" id="stop" title="Stop"></button>
+				</div>
+				<div class="control">
+					<select class="button" id="file-select" title="Choose Track…"></select>
+				</div>
+				<div class="control">
+					<button class="button button-icon icon-export-alt" id="source-link" title="Share Content…"></button>
+				</div>
+				<div class="control">
+					<a href="https://github.com/detomon/bliplay/blob/master/SYNTAX.md" target="_blank" class="button button-icon icon-book" title="Syntax Manual"></a>
+				</div>
+			</div>
+			<div class="flex-nowrap">
+				<div class="control progress-bar">
+					<div id="progress-bar" class="progress-bar__value"></div>
+				</div>
+			</div>
 		</div>
 	</footer>
 </div>

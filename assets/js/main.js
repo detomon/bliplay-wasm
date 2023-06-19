@@ -10,6 +10,7 @@ window.Bliplay = new BliplayController({
 app.addInit(function (app) {
 
 const textarea = app.$('.code-editor');
+const progressBar = app.$('#progress-bar');
 const editor = textarea.editorInstance;
 
 app.editorInstance = editor;
@@ -40,7 +41,7 @@ app.playAction = () => {
 		}).finally(() => {
 			app.setState('loading', false);
 		});
-	})
+	});
 };
 
 app.stopAction = () => {
@@ -61,6 +62,10 @@ app.$('#stop').addEventListener('click', () => {
 });
 
 app.addLoadPromise(window.Bliplay.readyPromise);
+
+window.Bliplay.progressChanged = (progress) => {
+	progressBar.style.width = (Math.min(progress, 1) * 100) + '%';
+};
 
 function uintToString(uintArray) {
 	const encodedString = String.fromCharCode.apply(null, uintArray);

@@ -7,6 +7,7 @@ class BliplayController {
 		this.files = {};
 		this.readyResolve = null;
 		this.readyReject = null;
+		this.progressChanged = null;
 		this.running = false;
 
 		this.printErr = (line) => {
@@ -39,7 +40,18 @@ class BliplayController {
 	}
 
 	generate(length) {
-		return this._generate(length);
+		length = this._generate(length);
+
+		if (this.progressChanged) {
+			const progress = this._getTime() / this._getDuration();
+			this.progressChanged(progress);
+		}
+
+		return length;
+	}
+
+	getDuration() {
+		return this._getDuration();
 	}
 
 	_heapSubarray(array, memory, offset, length) {

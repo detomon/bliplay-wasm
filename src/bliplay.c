@@ -14,6 +14,8 @@ static BKInt lineNumbers[255];
 static BKInt activeLineNumbers[255];
 static BKInt lineNumbersCount = 0;
 static BKUInt durationTicks = 0;
+static BKUInt timerTicks = 0;
+static BKDivider timer;
 
 static BKTKParser parser;
 static BKTKCompiler compiler;
@@ -90,6 +92,43 @@ static void updateLineNumbers(BKTKContext const* ctx) {
 	}
 }
 
+static BKUInt timerCallback(BKCallbackInfo * info, void * userData) {
+	timerTicks ++;
+
+	return 0;
+}
+
+static BKUInt calculateDuration() {
+	BKUInt ticks = 0;
+
+	for (BKInt i = 0; i < context.tracks.len; i++) {
+		BKInt running = 1;
+		BKInt trackTicks = 0;
+		BKTKTrack *track = *(BKTKTrack**) BKArrayItemAt(&context.tracks, i);
+		BKTKInterpreter *interpreter = (BKTKInterpreter *) &track->interpreter;
+
+		do {
+			BKInt stepTicks;
+
+			BKTKInterpreterAdvance(interpreter, track, &stepTicks);
+
+			if (running) {
+				trackTicks += stepTicks;
+			}
+
+			running = !(interpreter->object.flags & (BKTKInterpreterFlagHasStopped | BKTKInterpreterFlagHasRepeated));
+		}
+		while (running);
+
+		ticks = BKMax(ticks, trackTicks);
+	}
+
+	BKTKContextReset(&context);
+	BKContextReset(&ctx);
+
+	return ticks;
+}
+
 EMSCRIPTEN_KEEPALIVE
 BKInt initialize(BKInt theNumChannels, BKInt theSampleRate) {
 	BKInt res;
@@ -106,7 +145,7 @@ BKInt initialize(BKInt theNumChannels, BKInt theSampleRate) {
 		fprintf(stderr, "BKContextInit failed (%s)\n", BKStatusGetName(res));
 	}
 
-	if (res == 0) {
+	if (res == BK_SUCCESS) {
 		buffer = calloc(sizeof(BKFrame[numChannels]), maxBufferSize);
 		bufferFloat = calloc(sizeof(float[numChannels]), maxBufferSize);
 
@@ -116,8 +155,15 @@ BKInt initialize(BKInt theNumChannels, BKInt theSampleRate) {
 		}
 	}
 
-	if (res == 0) {
+	if (res == BK_SUCCESS) {
 		isInitialized = 1;
+
+		BKDividerInit(&timer, 1, &(BKCallback) {
+			.func     = timerCallback,
+			.userInfo = NULL,
+		});
+
+		BKContextAttachDivider(&ctx, &timer, BK_CLOCK_TYPE_BEAT);
 	}
 
 	return res;
@@ -197,7 +243,7 @@ BKInt compileSource(char const* source) {
 		fprintf(stderr, "BKTKContextInit failed (%s)\n", BKStatusGetName(res));
 	}
 
-	if (res == 0) {
+	if (res == BK_SUCCESS) {
 		res = BKTKTokenizerPutChars (&tokenizer, (uint8_t const*) source, length, (BKTKPutTokenFunc) putToken, &parser);
 
 		// end tokenizer
@@ -212,7 +258,7 @@ BKInt compileSource(char const* source) {
 			res = -1;
 		}
 
-		if (res == 0) {
+		if (res == BK_SUCCESS) {
 			nodeTree = BKTKParserGetNodeTree(&parser);
 
 			if ((res = BKTKCompilerCompile(&compiler, nodeTree)) != 0) {
@@ -220,13 +266,13 @@ BKInt compileSource(char const* source) {
 				res = -1;
 			}
 
-			if (res == 0) {
+			if (res == BK_SUCCESS) {
 				BKHashTableIteratorInit(&sampleItor, &compiler.samples);
 			}
 		}
 	}
 
-	if (res == 0) {
+	if (res == BK_SUCCESS) {
 		wasCompiled = 1;
 	}
 
@@ -255,37 +301,6 @@ BKInt createContext(void) {
 	return 0;
 }
 
-BKUInt calculateDuration() {
-	BKUInt ticks = 0;
-
-	for (BKInt i = 0; i < context.tracks.len; i++) {
-		BKInt running = 1;
-		BKInt trackTicks = 0;
-		BKTKTrack *track = *(BKTKTrack**) BKArrayItemAt(&context.tracks, i);
-		BKTKInterpreter *interpreter = (BKTKInterpreter *) &track->interpreter;
-
-		do {
-			BKInt stepTicks;
-
-			BKTKInterpreterAdvance(interpreter, track, &stepTicks);
-
-			if (running) {
-				trackTicks += stepTicks;
-			}
-
-			running = !(interpreter->object.flags & (BKTKInterpreterFlagHasStopped | BKTKInterpreterFlagHasRepeated));
-		}
-		while (running);
-
-		ticks = BKMax(ticks, trackTicks);
-	}
-
-	BKTKContextReset(&context);
-	BKContextReset(&ctx);
-
-	return ticks;
-}
-
 EMSCRIPTEN_KEEPALIVE
 int startAudioContext(void) {
 	BKInt res = 0;
@@ -305,8 +320,10 @@ int startAudioContext(void) {
 	}
 
 	durationTicks = 0;
+	timerTicks = 0;
+	BKDividerReset(&timer);
 
-	if (res == 0) {
+	if (res == BK_SUCCESS) {
 		isRunning = 1;
 		durationTicks = calculateDuration();
 	}
@@ -342,18 +359,28 @@ float const* getBuffer() {
 	return bufferFloat;
 }
 
+/**
+ * Current time in ticks.
+ */
 EMSCRIPTEN_KEEPALIVE
 BKUInt getTime(void) {
-	return BKTimeGetTime(ctx.currentTime);
+	return timerTicks;
 }
 
+/**
+ * Duration time in ticks.
+ */
 EMSCRIPTEN_KEEPALIVE
 BKUInt getDuration() {
-	return (
-		(float)durationTicks
-		* (float)context.info.tickRate.factor
-		/ (float)context.info.tickRate.divisor
-		* sampleRate);
+	return durationTicks;
+}
+
+/**
+ * Tick duration in seconds.
+ */
+EMSCRIPTEN_KEEPALIVE
+float getTickDuration() {
+	return (float)context.info.tickRate.factor / (float)context.info.tickRate.divisor;
 }
 
 EMSCRIPTEN_KEEPALIVE

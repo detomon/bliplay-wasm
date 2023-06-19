@@ -43,7 +43,10 @@ class BliplayController {
 		length = this._generate(length);
 
 		if (this.progressChanged) {
-			const progress = this._getTime() / this._getDuration();
+			const duration = this._getDuration();
+			const time = this._getTime();
+			const progress = (time % duration) / duration;
+
 			this.progressChanged(progress);
 		}
 
